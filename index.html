@@ -1,0 +1,860 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Treinamento 3 · Ligação Telefônica | HVSB</title>
+<link rel="icon" type="image/svg+xml" href="https://static.wixstatic.com/shapes/167cba_c76d768559744f90b364541c6ff3aa51.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&family=Allura&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+
+<style>
+:root {
+  --navy-deep: #0A3D5F;
+  --navy:      #0E5C8C;
+  --blue:      #1B6FB8;
+  --blue-light:#A9D6E8;
+  --gold:      #D4A340;
+  --gold-light:#E8C77B;
+  --white:     #FFFFFF;
+  --red:       #C44545;
+  --red-light: #E07474;
+  --green:     #4A9B7E;
+  --green-light:#7ABFA6;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html, body { width: 100%; height: 100%; overflow: hidden; font-family: 'Inter', sans-serif; background: var(--navy-deep); color: var(--white); }
+
+.deck { position: relative; width: 100vw; height: 100vh; overflow: hidden; }
+
+.slide {
+  position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+  display: flex; flex-direction: column; justify-content: center; align-items: center;
+  padding: 3rem 5rem;
+  opacity: 0; transform: translateX(50px);
+  transition: opacity 0.45s ease, transform 0.45s ease;
+  pointer-events: none;
+  background: linear-gradient(160deg, var(--navy) 0%, var(--navy-deep) 60%, #061F33 100%);
+  overflow: hidden;
+}
+.slide.active  { opacity: 1; transform: translateX(0); pointer-events: all; }
+.slide.prev    { transform: translateX(-50px); }
+
+.slide::before {
+  content: ''; position: absolute; top: 0; right: 0;
+  width: 300px; height: 300px;
+  background: radial-gradient(circle, rgba(169,214,232,0.07) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+h1, h2, h3, h4 { font-family: 'Montserrat', sans-serif; font-weight: 800; letter-spacing: -0.01em; line-height: 1.05; text-transform: uppercase; }
+h1 { font-size: clamp(2.6rem, 5vw, 4.5rem); }
+h2 { font-size: clamp(1.8rem, 3.5vw, 3rem); margin-bottom: 1.2rem; }
+h3 { font-size: clamp(1.2rem, 2vw, 1.7rem); margin-bottom: 0.8rem; }
+
+p { font-size: 1rem; line-height: 1.6; color: rgba(255,255,255,0.88); }
+
+.script { font-family: 'Allura', cursive; text-transform: none; font-weight: 400; color: var(--blue-light); }
+.script-accent { font-family: 'Allura', cursive; font-size: clamp(2rem,4vw,3.5rem); color: var(--blue-light); display: block; margin-bottom: 0.4rem; text-transform: none; font-weight: 400; }
+
+.tag {
+  display: inline-block; padding: 0.35rem 0.9rem;
+  background: var(--blue); color: white; border-radius: 2px;
+  font-family: 'Montserrat', sans-serif; font-size: 0.65rem; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.18em; margin-bottom: 1.2rem;
+  border: 1px solid var(--blue-light);
+}
+.tag.gold  { background: var(--gold); color: var(--navy-deep); border-color: var(--gold-light); }
+.tag.green { background: var(--green); border-color: rgba(255,255,255,0.3); }
+.tag.red   { background: var(--red); border-color: rgba(255,255,255,0.3); }
+
+.module-num { font-family: 'Montserrat', sans-serif; font-size: 0.7rem; font-weight: 700; color: var(--gold); letter-spacing: 0.3em; margin-bottom: 0.6rem; }
+
+/* CAPA */
+.slide-cover { text-align: center; }
+.slide-cover h1 {
+  background: linear-gradient(135deg, var(--white) 0%, var(--blue-light) 100%);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  font-weight: 900; margin-bottom: 0.5rem;
+}
+.subtitle { font-family: 'Montserrat', sans-serif; font-size: 1rem; color: var(--blue-light); font-weight: 600; letter-spacing: 0.3em; text-transform: uppercase; margin-bottom: 2.5rem; margin-top: 0.8rem; }
+
+.meta { display: flex; gap: 4rem; justify-content: center; margin-top: 2.5rem; opacity: 0.85; }
+.meta > div { text-align: center; }
+.meta .label { font-family: 'Montserrat', sans-serif; font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.25em; font-weight: 600; margin-bottom: 0.4rem; color: var(--gold); }
+.meta .value { font-family: 'Montserrat', sans-serif; font-weight: 600; font-size: 0.9rem; }
+
+/* AGENDA / OUTLINE */
+.agenda { display: grid; grid-template-columns: 1fr 1fr; gap: 0.9rem; max-width: 1000px; width: 100%; margin-top: 1.2rem; }
+.agenda-item { display: flex; align-items: center; gap: 1rem; background: rgba(169,214,232,0.05); border: 1px solid rgba(169,214,232,0.15); border-left: 3px solid var(--blue); padding: 0.9rem 1.2rem; border-radius: 4px; }
+.agenda-num { font-family: 'Montserrat', sans-serif; font-size: 1.4rem; font-weight: 900; color: var(--blue-light); line-height: 1; min-width: 32px; }
+.agenda-txt { font-family: 'Montserrat', sans-serif; font-size: 0.9rem; font-weight: 600; color: rgba(255,255,255,0.9); }
+
+/* PROBLEMA / CAUSA */
+.callout { max-width: 950px; background: rgba(196,69,69,0.08); border: 1px solid rgba(196,69,69,0.3); border-left: 4px solid var(--red); padding: 1.4rem 1.8rem; border-radius: 4px; margin-top: 1rem; }
+.callout-title { font-family: 'Montserrat', sans-serif; font-size: 0.7rem; font-weight: 700; color: var(--red-light); letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 0.6rem; }
+.callout p { font-size: 1.05rem; line-height: 1.6; color: rgba(255,255,255,0.92); }
+.callout p strong { color: var(--gold-light); }
+
+.callout.green { background: rgba(74,155,126,0.08); border-color: rgba(74,155,126,0.3); border-left-color: var(--green); }
+.callout.green .callout-title { color: var(--green-light); }
+
+/* DOIS LADOS - DO / DON'T */
+.dual-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; max-width: 1100px; width: 100%; margin-top: 1rem; }
+.dual-card { background: rgba(169,214,232,0.04); border: 1px solid rgba(169,214,232,0.15); border-radius: 6px; padding: 1.6rem 1.4rem; }
+.dual-card.good { border-color: rgba(74,155,126,0.35); background: rgba(74,155,126,0.06); }
+.dual-card.bad  { border-color: rgba(196,69,69,0.35); background: rgba(196,69,69,0.06); }
+.dual-head { display: flex; align-items: center; gap: 0.6rem; font-family: 'Montserrat', sans-serif; font-size: 0.75rem; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 1rem; }
+.dual-card.good .dual-head { color: var(--green-light); }
+.dual-card.bad  .dual-head { color: var(--red-light); }
+.dual-head .icon { font-size: 1.2rem; }
+.dual-list { display: flex; flex-direction: column; gap: 0.65rem; }
+.dual-list li { list-style: none; padding-left: 1.2rem; position: relative; font-size: 0.92rem; line-height: 1.4; color: rgba(255,255,255,0.9); font-family: 'Inter', sans-serif; }
+.dual-card.good .dual-list li::before { content: '✓'; position: absolute; left: 0; color: var(--green-light); font-weight: 700; }
+.dual-card.bad  .dual-list li::before { content: '✗'; position: absolute; left: 0; color: var(--red-light); font-weight: 700; }
+
+/* PILARES / CARDS GRID */
+.pillars { display: grid; grid-template-columns: repeat(3,1fr); gap: 1.2rem; max-width: 1100px; width: 100%; margin-top: 1.2rem; }
+.pillar-card { background: rgba(169,214,232,0.05); border: 1px solid rgba(169,214,232,0.18); padding: 1.6rem 1.3rem; border-radius: 4px; text-align: left; }
+.pillar-num { font-family: 'Montserrat', sans-serif; font-size: 2.4rem; font-weight: 900; color: var(--gold); line-height: 1; margin-bottom: 0.6rem; }
+.pillar-title { font-family: 'Montserrat', sans-serif; font-size: 0.95rem; font-weight: 800; color: var(--blue-light); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.6rem; line-height: 1.2; }
+.pillar-desc { font-size: 0.88rem; color: rgba(255,255,255,0.78); line-height: 1.5; font-family: 'Inter', sans-serif; }
+
+/* TIPOS DE LIGAÇÃO */
+.tipo-card { max-width: 1000px; width: 100%; background: rgba(169,214,232,0.05); border: 1px solid rgba(169,214,232,0.2); border-radius: 6px; padding: 2rem 2.2rem; margin-top: 1rem; }
+.tipo-head { display: flex; align-items: center; gap: 1.2rem; margin-bottom: 1.4rem; padding-bottom: 1rem; border-bottom: 1px solid rgba(169,214,232,0.15); }
+.tipo-icon { width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; flex-shrink: 0; }
+.tipo-icon.red { background: rgba(196,69,69,0.18); color: var(--red-light); border: 2px solid rgba(196,69,69,0.4); }
+.tipo-icon.blue { background: rgba(27,111,184,0.18); color: var(--blue-light); border: 2px solid rgba(27,111,184,0.4); }
+.tipo-icon.gold { background: rgba(212,163,64,0.18); color: var(--gold); border: 2px solid rgba(212,163,64,0.4); }
+.tipo-title { font-family: 'Montserrat', sans-serif; font-size: 1.5rem; font-weight: 800; color: var(--white); text-transform: uppercase; margin: 0; }
+.tipo-sub { font-family: 'Inter', sans-serif; font-size: 0.85rem; color: var(--blue-light); margin-top: 0.2rem; font-weight: 400; }
+.tipo-body { display: grid; grid-template-columns: 1fr 1fr; gap: 1.4rem; }
+.tipo-section h4 { font-family: 'Montserrat', sans-serif; font-size: 0.7rem; font-weight: 700; color: var(--gold); letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 0.7rem; }
+.tipo-section ul { list-style: none; padding: 0; margin: 0; }
+.tipo-section li { font-size: 0.88rem; line-height: 1.5; color: rgba(255,255,255,0.88); margin-bottom: 0.4rem; padding-left: 1rem; position: relative; }
+.tipo-section li::before { content: '→'; position: absolute; left: 0; color: var(--blue-light); }
+
+/* SCRIPT BOX (FRASE PRONTA) */
+.script-box { max-width: 1000px; width: 100%; background: rgba(169,214,232,0.06); border-left: 4px solid var(--blue-light); padding: 1.2rem 1.6rem; margin: 0.7rem 0; border-radius: 0 4px 4px 0; }
+.script-box .role { font-family: 'Montserrat', sans-serif; font-size: 0.65rem; font-weight: 700; color: var(--gold); letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 0.4rem; }
+.script-box p { font-family: 'Inter', sans-serif; font-size: 1.05rem; line-height: 1.55; color: rgba(255,255,255,0.95); font-style: italic; }
+.script-box p::before { content: '"'; font-size: 1.4rem; color: var(--blue-light); margin-right: 0.2rem; }
+.script-box p::after { content: '"'; font-size: 1.4rem; color: var(--blue-light); margin-left: 0.2rem; }
+
+/* TIMELINE */
+.timeline { display: grid; grid-template-columns: repeat(4,1fr); gap: 1rem; max-width: 1100px; width: 100%; margin-top: 1.2rem; }
+.tl-step { background: rgba(169,214,232,0.05); border: 1px solid rgba(169,214,232,0.18); padding: 1.4rem 1.1rem; border-radius: 4px; text-align: left; border-top: 3px solid var(--blue); }
+.tl-when { font-family: 'Montserrat', sans-serif; font-size: 0.65rem; font-weight: 700; color: var(--gold); letter-spacing: 0.18em; text-transform: uppercase; margin-bottom: 0.5rem; }
+.tl-title { font-family: 'Montserrat', sans-serif; font-size: 1rem; font-weight: 800; color: var(--blue-light); margin-bottom: 0.6rem; line-height: 1.2; text-transform: uppercase; }
+.tl-desc { font-size: 0.82rem; color: rgba(255,255,255,0.8); line-height: 1.5; font-family: 'Inter', sans-serif; }
+
+/* META BIG */
+.meta-big { max-width: 900px; text-align: center; margin-top: 1.2rem; }
+.meta-big .num-huge { font-family: 'Montserrat', sans-serif; font-size: clamp(5rem, 12vw, 9rem); font-weight: 900; line-height: 1; background: linear-gradient(135deg, var(--gold) 0%, var(--gold-light) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 0.5rem; }
+.meta-big .num-lbl { font-family: 'Montserrat', sans-serif; font-size: 1rem; color: var(--blue-light); letter-spacing: 0.2em; text-transform: uppercase; font-weight: 600; margin-bottom: 1.4rem; }
+.meta-stats { display: flex; gap: 3rem; justify-content: center; margin-top: 1.5rem; }
+.meta-stat { text-align: center; }
+.meta-stat .val { font-family: 'Montserrat', sans-serif; font-size: 2.4rem; font-weight: 900; color: var(--blue-light); line-height: 1; }
+.meta-stat .lbl { font-family: 'Montserrat', sans-serif; font-size: 0.7rem; color: rgba(255,255,255,0.6); letter-spacing: 0.15em; text-transform: uppercase; margin-top: 0.4rem; }
+
+/* CENÁRIOS / ROLEPLAY */
+.cenario { max-width: 1000px; width: 100%; margin-top: 1rem; }
+.cenario-num { font-family: 'Montserrat', sans-serif; font-size: 0.7rem; font-weight: 700; color: var(--red-light); letter-spacing: 0.25em; text-transform: uppercase; margin-bottom: 0.4rem; }
+.cenario-titulo { font-family: 'Montserrat', sans-serif; font-size: 1.6rem; font-weight: 800; color: var(--white); margin-bottom: 1rem; }
+.cenario-situacao { background: rgba(196,69,69,0.08); border-left: 3px solid var(--red); padding: 1rem 1.4rem; border-radius: 4px; font-family: 'Inter', sans-serif; font-size: 0.95rem; line-height: 1.55; color: rgba(255,255,255,0.92); margin-bottom: 1rem; }
+.cenario-situacao strong { color: var(--gold-light); }
+.cenario-pergunta { font-family: 'Montserrat', sans-serif; font-size: 0.85rem; font-weight: 700; color: var(--gold); letter-spacing: 0.1em; text-transform: uppercase; margin-top: 1rem; text-align: center; }
+
+/* KPI TABLE */
+.kpi-table { width: 100%; max-width: 1050px; border-collapse: collapse; font-family: 'Inter', sans-serif; font-size: 0.9rem; margin-top: 1rem; }
+.kpi-table th { text-align: left; padding: 0.7rem 0.8rem; color: var(--blue-light); font-family: 'Montserrat', sans-serif; font-size: 0.65rem; letter-spacing: 0.12em; text-transform: uppercase; font-weight: 700; border-bottom: 2px solid rgba(169,214,232,0.3); }
+.kpi-table th.r, .kpi-table td.r { text-align: center; }
+.kpi-table td { padding: 0.85rem 0.8rem; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 0.9rem; }
+.kpi-table td strong { color: var(--blue-light); }
+.kpi-table .meta-val { font-family: 'Montserrat', sans-serif; font-weight: 800; color: var(--gold); }
+
+/* ENCERRAMENTO */
+.closing { text-align: center; max-width: 850px; }
+.closing h2 { background: linear-gradient(135deg, var(--white) 0%, var(--blue-light) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 1.6rem; }
+.closing p { font-size: 1.1rem; line-height: 1.7; color: rgba(255,255,255,0.9); margin-bottom: 1rem; }
+.closing p strong { color: var(--gold); }
+.signature { margin-top: 2.2rem; font-family: 'Montserrat', sans-serif; font-size: 0.78rem; color: var(--blue-light); letter-spacing: 0.3em; text-transform: uppercase; font-weight: 600; }
+.signature::before, .signature::after { content: '◆'; margin: 0 1rem; color: var(--gold); opacity: 0.6; }
+
+/* NAV */
+.progress-bar { position: fixed; top: 0; left: 0; width: 100%; height: 3px; background: rgba(169,214,232,0.1); z-index: 99; }
+.progress-fill { height: 100%; background: linear-gradient(90deg, var(--blue) 0%, var(--blue-light) 50%, var(--gold) 100%); width: 0%; transition: width 0.4s ease; }
+.deck-logo { position: fixed; top: 1.5rem; right: 2rem; font-family: 'Montserrat', sans-serif; font-size: 0.65rem; color: rgba(169,214,232,0.45); letter-spacing: 0.3em; text-transform: uppercase; z-index: 99; font-weight: 600; }
+.deck-logo .gold { color: var(--gold); }
+.nav-controls { position: fixed; bottom: 2rem; right: 2rem; display: flex; gap: 0.5rem; z-index: 100; }
+.nav-btn { background: rgba(169,214,232,0.1); border: 1px solid var(--blue-light); width: 46px; height: 46px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.4rem; font-weight: 700; transition: all 0.2s; font-family: 'Montserrat', sans-serif; }
+.nav-btn:hover { background: var(--blue-light); color: var(--navy-deep); }
+.nav-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+.slide-counter { position: fixed; bottom: 2rem; left: 2rem; font-family: 'Montserrat', sans-serif; font-size: 0.8rem; color: rgba(169,214,232,0.45); letter-spacing: 0.2em; z-index: 100; font-weight: 600; }
+.slide-counter .current { color: var(--gold); font-weight: 700; }
+
+@media (max-width: 768px) {
+  .slide { padding: 2rem 1.5rem; }
+  .agenda, .dual-grid, .pillars, .timeline, .tipo-body { grid-template-columns: 1fr; }
+  .nav-controls { bottom: 1rem; right: 1rem; }
+  .slide-counter { bottom: 1rem; left: 1rem; }
+  .meta { flex-direction: column; gap: 1.5rem; }
+  .meta-stats { flex-direction: column; gap: 1rem; }
+}
+</style>
+</head>
+<body>
+
+<div class="progress-bar"><div class="progress-fill" id="progress"></div></div>
+<div class="deck-logo">Sigma <span class="gold">×</span> HVSB · Treinamento 03</div>
+
+<div class="deck" id="deck">
+
+  <!-- 1 — CAPA -->
+  <section class="slide slide-cover active">
+    <span class="script-accent">a voz que</span>
+    <h1>Acolhe e<br>Converte</h1>
+    <div class="subtitle">Treinamento 03 · Ligação Telefônica</div>
+    <div class="meta">
+      <div><div class="label">Hospital</div><div class="value">Veterinário<br>São Bernardo</div></div>
+      <div><div class="label">Foco</div><div class="value">Atendimento<br>por telefone</div></div>
+      <div><div class="label">Time</div><div class="value">Recepção<br>+ Letícia</div></div>
+    </div>
+  </section>
+
+  <!-- 2 — POR QUE ESTAMOS AQUI -->
+  <section class="slide">
+    <span class="tag red">Por que estamos aqui</span>
+    <h2>A frase que ninguém quer ouvir</h2>
+    <div class="callout">
+      <div class="callout-title">Ligação real · maio 2026 · cliente antigo do hospital</div>
+      <p style="font-style: italic; font-size: 1.15rem; line-height: 1.6;">
+        "Era tão importante que vocês <strong>não deram importância para ele</strong>. Gastei quase R$ 3 mil em 36 horas e ninguém me ligou com o resultado do exame. O retorno só veio porque <strong>eu cobrei</strong>."
+      </p>
+      <p style="margin-top: 0.9rem; font-size: 0.85rem; color: rgba(169,214,232,0.7); font-style: normal;">
+        — Tutor decepcionado, sobre o exame de doença do carrapato solicitado pela equipe veterinária do São Bernardo.
+      </p>
+    </div>
+    <div class="callout green" style="margin-top: 1.2rem;">
+      <div class="callout-title">O objetivo desse treinamento</div>
+      <p>
+        Padronizar a ligação telefônica no mesmo cuidado que você já aplica no WhatsApp. Tom, acolhimento, <strong>acompanhamento ativo</strong> e fechamento — tudo redondo. A recepção é a porta de entrada do hospital, e a sua voz é o cartão de visita.
+      </p>
+    </div>
+  </section>
+
+  <!-- 3 — AGENDA -->
+  <section class="slide">
+    <span class="tag">Roteiro de hoje</span>
+    <h2>O que vamos ver</h2>
+    <div class="agenda">
+      <div class="agenda-item"><div class="agenda-num">01</div><div class="agenda-txt">A voz como ferramenta — o som da empatia</div></div>
+      <div class="agenda-item"><div class="agenda-num">02</div><div class="agenda-txt">Os 3 tipos de ligação que entram no hospital</div></div>
+      <div class="agenda-item"><div class="agenda-num">03</div><div class="agenda-txt">Acolhimento em emergência 24h</div></div>
+      <div class="agenda-item"><div class="agenda-num">04</div><div class="agenda-txt">Acompanhamento ativo do tutor</div></div>
+      <div class="agenda-item"><div class="agenda-num">05</div><div class="agenda-txt">Avaliação Google · meta de 120 reviews</div></div>
+      <div class="agenda-item"><div class="agenda-num">06</div><div class="agenda-txt">Roleplay · 4 cenários reais</div></div>
+      <div class="agenda-item" style="grid-column: 1/-1;"><div class="agenda-num">07</div><div class="agenda-txt">Indicadores que vão ser acompanhados por recepcionista a partir de agora</div></div>
+    </div>
+  </section>
+
+  <!-- 4 — MÓDULO 1: VOZ -->
+  <section class="slide">
+    <div class="module-num">Módulo 01</div>
+    <h2>A voz como ferramenta</h2>
+    <p style="max-width: 900px; text-align: center; margin-bottom: 1.4rem;">
+      No chat o tutor lê. Na ligação o tutor <strong style="color: var(--gold-light);">sente</strong>. Não dá pra esconder pressa, irritação ou distração quando a voz chega no ouvido dele. Por isso a ligação exige mais — e é onde a recepção brilha ou onde a gente perde o cliente.
+    </p>
+    <div class="dual-grid">
+      <div class="dual-card good">
+        <div class="dual-head"><span class="icon">🎯</span> O que o tutor sente quando você atende bem</div>
+        <ul class="dual-list">
+          <li>"Aqui eles entendem o que tô passando"</li>
+          <li>"Vou ser bem cuidado"</li>
+          <li>"Confio em deixar meu pet com eles"</li>
+          <li>"Vou indicar pra todo mundo"</li>
+        </ul>
+      </div>
+      <div class="dual-card bad">
+        <div class="dual-head"><span class="icon">⚠️</span> O que o tutor sente quando você atende mal</div>
+        <ul class="dual-list">
+          <li>"Tô atrapalhando ela"</li>
+          <li>"Será que eles vão cuidar mesmo do meu pet?"</li>
+          <li>"Vou ligar pra outro lugar"</li>
+          <li>"Não volto mais e vou avaliar 1 estrela"</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5 — OS 3 PILARES DA VOZ -->
+  <section class="slide">
+    <span class="tag">Como soar acolhedora</span>
+    <h2>Os 3 pilares da voz</h2>
+    <div class="pillars">
+      <div class="pillar-card">
+        <div class="pillar-num">01</div>
+        <div class="pillar-title">Sorriso na voz</div>
+        <div class="pillar-desc">
+          Sorria de verdade antes de atender. O tutor <em>escuta</em> o sorriso. Tom alto demais soa fingido — mas tom apagado soa burocrático. O equilíbrio é uma voz <strong style="color:var(--blue-light);">leve e firme</strong>.
+        </div>
+      </div>
+      <div class="pillar-card">
+        <div class="pillar-num">02</div>
+        <div class="pillar-title">Ritmo do tutor</div>
+        <div class="pillar-desc">
+          Tutor agitado? Você <strong style="color:var(--blue-light);">não acelera junto</strong>. Você desacelera o tom dele. Tutor calmo? Acompanhe. Espelhar o ritmo cria conexão. Quem manda no ritmo é quem está no telefone — você.
+        </div>
+      </div>
+      <div class="pillar-card">
+        <div class="pillar-num">03</div>
+        <div class="pillar-title">Escuta ativa</div>
+        <div class="pillar-desc">
+          Pequenos "uhum", "entendi", "claro" enquanto ele fala. Não interrompa. Quando ele terminar, <strong style="color:var(--blue-light);">repita em uma frase</strong> o que ele disse pra confirmar que entendeu antes de responder.
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 6 — MÓDULO 2: TIPOS DE LIGAÇÃO -->
+  <section class="slide">
+    <div class="module-num">Módulo 02</div>
+    <h2>3 tipos de ligação</h2>
+    <p style="max-width: 900px; text-align: center; margin-bottom: 1.4rem; color: rgba(255,255,255,0.82);">
+      Cada uma tem um objetivo diferente, um tom diferente e um tempo diferente no telefone. Saber identificar nos <strong style="color: var(--gold-light);">primeiros 15 segundos</strong> é o que separa o atendimento bom do excelente.
+    </p>
+    <div class="pillars">
+      <div class="pillar-card" style="border-top: 3px solid var(--red);">
+        <div class="pillar-num" style="color: var(--red-light);">A</div>
+        <div class="pillar-title" style="color: var(--red-light);">Emergência 24h</div>
+        <div class="pillar-desc">
+          Tutor em pânico. Pet está mal <em>agora</em>. O objetivo é <strong style="color:var(--red-light);">trazer o pet pra cá</strong> rapidamente. Tempo no telefone: o mínimo necessário.
+        </div>
+      </div>
+      <div class="pillar-card" style="border-top: 3px solid var(--blue);">
+        <div class="pillar-num" style="color: var(--blue-light);">B</div>
+        <div class="pillar-title" style="color: var(--blue-light);">Agendamento eletivo</div>
+        <div class="pillar-desc">
+          Consulta de especialidade, vacina, banho/tosa. O objetivo é <strong style="color:var(--blue-light);">agendar com segurança</strong>. Tempo: o necessário pra qualificar, sem pressa.
+        </div>
+      </div>
+      <div class="pillar-card" style="border-top: 3px solid var(--gold);">
+        <div class="pillar-num" style="color: var(--gold);">C</div>
+        <div class="pillar-title" style="color: var(--gold);">Retorno e exame</div>
+        <div class="pillar-desc">
+          Cliente já foi atendido, está esperando resultado, retorno ou tirando dúvida. O objetivo é <strong style="color:var(--gold);">não deixar ele se sentir esquecido</strong>.
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 7 — TIPO A: EMERGÊNCIA -->
+  <section class="slide">
+    <span class="tag red">Tipo A · Emergência 24h</span>
+    <h2>A ligação que não pode falhar</h2>
+    <div class="tipo-card">
+      <div class="tipo-head">
+        <div class="tipo-icon red">🚨</div>
+        <div>
+          <div class="tipo-title">Emergência 24h</div>
+          <div class="tipo-sub">Tutor desesperado · Pet em risco · Decisão em segundos</div>
+        </div>
+      </div>
+      <div class="tipo-body">
+        <div class="tipo-section">
+          <h4>O que fazer</h4>
+          <ul>
+            <li>Atender em até 3 toques</li>
+            <li>Identificar urgência nos primeiros 15s</li>
+            <li>Acolher antes de qualquer dado: "Calma, estou aqui"</li>
+            <li>Triagem rápida: o que aconteceu? há quanto tempo?</li>
+            <li>Direcionar: "Venha já, vou avisar a equipe"</li>
+            <li>Coletar dados mínimos no telefone — o resto na chegada</li>
+          </ul>
+        </div>
+        <div class="tipo-section">
+          <h4>O que NÃO fazer</h4>
+          <ul>
+            <li>Pedir muitos dados antes de acolher</li>
+            <li>Dizer "vou transferir" — resolva você mesma</li>
+            <li>Dizer "não sei te informar" — descubra agora</li>
+            <li>Sugerir "passa no consultório amanhã"</li>
+            <li>Falar de preço antes de atender o pet</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 8 — FRASES EMERGÊNCIA -->
+  <section class="slide">
+    <span class="tag red">Tipo A · Frases para usar</span>
+    <h2>O que dizer em emergência</h2>
+    <div style="max-width: 1000px; width: 100%;">
+      <div class="script-box">
+        <div class="role">Abertura · primeiros 5 segundos</div>
+        <p>Hospital Veterinário São Bernardo, aqui é a [seu nome], o que está acontecendo?</p>
+      </div>
+      <div class="script-box">
+        <div class="role">Acolhimento · enquanto o tutor descreve</div>
+        <p>Calma, eu tô aqui, vou te ajudar agora. Me conta o que tá acontecendo com ele.</p>
+      </div>
+      <div class="script-box">
+        <div class="role">Direcionamento · depois da triagem</div>
+        <p>Entendi. Você consegue vir pra cá agora? Vou avisar a equipe que vocês estão chegando. Estamos te esperando.</p>
+      </div>
+      <div class="script-box">
+        <div class="role">Despedida · antes de desligar</div>
+        <p>Vem com cuidado. Qualquer coisa no caminho, liga de novo. Tá tudo bem, vamos cuidar dele aqui.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 9 — TIPO B: AGENDAMENTO -->
+  <section class="slide">
+    <span class="tag">Tipo B · Agendamento eletivo</span>
+    <h2>A ligação de oportunidade</h2>
+    <div class="tipo-card">
+      <div class="tipo-head">
+        <div class="tipo-icon blue">📅</div>
+        <div>
+          <div class="tipo-title">Agendamento eletivo</div>
+          <div class="tipo-sub">Especialidade · vacina · banho · tosa · castração</div>
+        </div>
+      </div>
+      <div class="tipo-body">
+        <div class="tipo-section">
+          <h4>Roteiro da ligação</h4>
+          <ul>
+            <li>Abertura padrão + sorriso na voz</li>
+            <li>"Como posso te ajudar?" e <strong>escute</strong></li>
+            <li>Identifique a real necessidade (não só o que ele pediu)</li>
+            <li>Já é cliente? Pet tem prontuário aqui?</li>
+            <li>Apresente a melhor opção, não só a primeira</li>
+            <li>Feche horário, confirme dados, mande WhatsApp na hora</li>
+          </ul>
+        </div>
+        <div class="tipo-section">
+          <h4>Perguntas-chave de triagem</h4>
+          <ul>
+            <li>Qual a idade e raça do pet?</li>
+            <li>Há quanto tempo está com esse sintoma?</li>
+            <li>Já passou em outro veterinário antes?</li>
+            <li>Como você nos conheceu?</li>
+            <li>Tem alguma restrição de horário?</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 10 — TIPO C: RETORNO E EXAME -->
+  <section class="slide">
+    <span class="tag gold">Tipo C · Retorno e exame</span>
+    <h2>A ligação que ninguém faz (e devia fazer)</h2>
+    <div class="tipo-card">
+      <div class="tipo-head">
+        <div class="tipo-icon gold">📞</div>
+        <div>
+          <div class="tipo-title">Retorno e acompanhamento</div>
+          <div class="tipo-sub">Resultado de exame · pós-procedimento · check-in</div>
+        </div>
+      </div>
+      <div class="tipo-body">
+        <div class="tipo-section">
+          <h4>Quando ligar (você liga primeiro)</h4>
+          <ul>
+            <li>Exame ficou pronto: ligue no mesmo dia</li>
+            <li>Pós-cirurgia: D+1 e D+7 sem falta</li>
+            <li>Tutor não voltou em 30 dias após procedimento</li>
+            <li>Vacina ou vermífugo perto de vencer (D-15)</li>
+          </ul>
+        </div>
+        <div class="tipo-section">
+          <h4>Por que isso muda tudo</h4>
+          <ul>
+            <li>Tutor sente que foi cuidado, não só atendido</li>
+            <li>Detecta problema antes de virar reclamação no Google</li>
+            <li>Gera consulta de retorno (recorrência)</li>
+            <li>Vira indicação espontânea pra família e amigos</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 11 — MÓDULO 3: ACOLHIMENTO -->
+  <section class="slide">
+    <div class="module-num">Módulo 03</div>
+    <h2>Acolher antes de processar</h2>
+    <p style="max-width: 900px; text-align: center; margin-bottom: 1.2rem;">
+      O tutor que liga em pânico não quer informação. Ele quer <strong style="color: var(--gold-light);">sentir que alguém vai cuidar</strong>. Os primeiros 10 segundos da ligação decidem se ele vem pra cá ou liga pro próximo hospital.
+    </p>
+    <div class="dual-grid">
+      <div class="dual-card good">
+        <div class="dual-head"><span class="icon">✓</span> Frases que ACOLHEM</div>
+        <ul class="dual-list">
+          <li>"Calma, eu tô aqui. Conta pra mim."</li>
+          <li>"Entendi, vou te ajudar agora."</li>
+          <li>"Você fez o certo em ligar pra gente."</li>
+          <li>"A equipe vai te receber assim que chegar."</li>
+          <li>"Vem com cuidado, tá tudo pronto pra vocês."</li>
+        </ul>
+      </div>
+      <div class="dual-card bad">
+        <div class="dual-head"><span class="icon">✗</span> Frases que AFASTAM</div>
+        <ul class="dual-list">
+          <li>"Aguarda um momento que vou ver."</li>
+          <li>"Não sei te informar sobre isso."</li>
+          <li>"Vou transferir, espera na linha."</li>
+          <li>"Hoje tá cheio, melhor amanhã."</li>
+          <li>"O senhor já tentou outro lugar?"</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- 12 — MÓDULO 4: ACOMPANHAMENTO -->
+  <section class="slide">
+    <div class="module-num">Módulo 04</div>
+    <h2>O caso da cadela com sangramento</h2>
+    <div class="callout">
+      <div class="callout-title">Cronologia do caso (anônimo)</div>
+      <p style="font-size: 0.98rem; line-height: 1.65;">
+        <strong style="color: var(--blue-light);">1.</strong> Cliente leva cadela com sangramento vulvar. Sugerimos internação + bateria de exames.<br>
+        <strong style="color: var(--blue-light);">2.</strong> Cadela fica <strong>36 horas</strong> internada. Cliente paga quase <strong>R$ 3.000</strong>.<br>
+        <strong style="color: var(--blue-light);">3.</strong> A própria veterinária pede exame de doença do carrapato — "exame sério, importante".<br>
+        <strong style="color: var(--blue-light);">4.</strong> Cliente vai pra casa. Recebe a medicação preventiva: antibiótico por 14 dias.<br>
+        <strong style="color: var(--red-light);">5.</strong> Resultado fica pronto. <strong>Negativo.</strong> Cliente viu sozinho no sistema dia 13/04.<br>
+        <strong style="color: var(--red-light);">6.</strong> Ninguém ligou pra avisar. Cliente segue dando antibiótico desnecessário.<br>
+        <strong style="color: var(--red-light);">7.</strong> Cliente cobra. Só aí a equipe retorna. <strong>Decepcionado.</strong>
+      </p>
+    </div>
+    <p style="max-width: 950px; text-align: center; margin-top: 1.2rem; font-size: 1rem; color: rgba(255,255,255,0.88);">
+      O atendimento clínico foi bom. O cuidado com a cadela foi bom. <strong style="color: var(--red-light);">O follow-up matou tudo.</strong> Essa é a peça que vamos consertar hoje.
+    </p>
+  </section>
+
+  <!-- 12.5 — AUDITORIA DAS LIGAÇÕES REAIS (NOVO) -->
+  <section class="slide">
+    <span class="tag">Auditoria · ligações reais da equipe</span>
+    <h2>O que a gente escutou</h2>
+    <p style="max-width: 950px; text-align: center; margin-bottom: 1rem; color: rgba(255,255,255,0.82); font-size: 0.95rem;">
+      Escutamos 4 ligações reais da semana passada. Tem muita coisa <strong style="color: var(--green-light);">boa</strong> acontecendo — e tem padrões claros do que precisa ajustar. Sem citar nomes, vamos olhar juntas.
+    </p>
+    <div class="dual-grid">
+      <div class="dual-card good">
+        <div class="dual-head"><span class="icon">✓</span> O que tá bom (e precisa virar padrão)</div>
+        <ul class="dual-list">
+          <li><strong>"São Bernardo, [Ana Júlia], boa noite."</strong> — abertura com nome cria conexão</li>
+          <li><strong>"Tá tudo bem com a Nina?"</strong> — usar o nome do pet humaniza tudo</li>
+          <li>Direcionar pro veterinário que pediu o exame</li>
+          <li>Avisar de horário restritivo: "ele tem cirurgia às 10:30"</li>
+          <li>Educação ao recusar oferta externa sem ser ríspida</li>
+        </ul>
+      </div>
+      <div class="dual-card bad">
+        <div class="dual-head"><span class="icon">⚠️</span> O que precisa ajustar</div>
+        <ul class="dual-list">
+          <li><strong>"São Bernardo, bom dia."</strong> sem o seu nome — perde personalização</li>
+          <li><strong>"Oi, bom dia, quem fala?"</strong> sem identificar o hospital — desorienta</li>
+          <li>Informar valor e desligar sem pegar dados do tutor</li>
+          <li>Não perguntar o que o pet tem antes de informar o preço</li>
+          <li>Não oferecer registrar o agendamento / lembrete</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- 12.6 — A ABERTURA PADRÃO (NOVO) -->
+  <section class="slide">
+    <span class="tag gold">A abertura padrão da ligação</span>
+    <h2>Os 5 segundos que mudam tudo</h2>
+    <p style="max-width: 900px; text-align: center; margin-bottom: 1rem; color: rgba(255,255,255,0.82);">
+      Em todas as ligações, sem exceção, a abertura precisa ser <strong style="color: var(--gold-light);">a mesma fórmula</strong>. O cliente que liga 5 vezes precisa sentir que está atendendo o mesmo hospital.
+    </p>
+    <div style="max-width: 1000px; width: 100%;">
+      <div class="script-box" style="border-left-color: var(--green);">
+        <div class="role" style="color: var(--green-light);">✓ A fórmula correta</div>
+        <p>Hospital Veterinário São Bernardo, [seu nome], [bom dia / boa tarde / boa noite].</p>
+      </div>
+      <div class="script-box" style="border-left-color: var(--red); margin-top: 0.6rem;">
+        <div class="role" style="color: var(--red-light);">✗ Versões que tirar do ar</div>
+        <p>São Bernardo, bom dia. <span style="color: rgba(255,255,255,0.6);">(falta seu nome)</span></p>
+      </div>
+      <div class="script-box" style="border-left-color: var(--red);">
+        <div class="role" style="color: var(--red-light);">✗ Versões que tirar do ar</div>
+        <p>Alô? Oi, bom dia, quem fala? <span style="color: rgba(255,255,255,0.6);">(falta tudo)</span></p>
+      </div>
+    </div>
+    <p style="max-width: 850px; text-align: center; margin-top: 1.2rem; font-size: 0.9rem; color: rgba(169,214,232,0.7);">
+      Dica: deixe um post-it no monitor com a frase escrita. Em 7 dias vira automático.
+    </p>
+  </section>
+
+  <!-- 13 — CICLO PÓS-ATENDIMENTO -->
+  <section class="slide">
+    <span class="tag green">A solução</span>
+    <h2>Ciclo de acompanhamento pós-atendimento</h2>
+    <div class="timeline">
+      <div class="tl-step">
+        <div class="tl-when">D+0 · No balcão</div>
+        <div class="tl-title">Saída do tutor</div>
+        <div class="tl-desc">Pergunta: "Como foi o atendimento hoje?" Se positivo: pede review Google na hora, manda link pelo WhatsApp.</div>
+      </div>
+      <div class="tl-step" style="border-top-color: var(--gold);">
+        <div class="tl-when">D+1 · WhatsApp</div>
+        <div class="tl-title">Cuidados pós</div>
+        <div class="tl-desc">Mensagem padrão de cuidados pós-procedimento. "Está tudo bem com o [nome do pet]?"</div>
+      </div>
+      <div class="tl-step" style="border-top-color: var(--green);">
+        <div class="tl-when">D+3 · Ligação</div>
+        <div class="tl-title">Retorno de exame</div>
+        <div class="tl-desc">Liga avisando: "Seu exame ficou pronto. Vamos agendar o retorno com o veterinário?"</div>
+      </div>
+      <div class="tl-step" style="border-top-color: var(--blue-light);">
+        <div class="tl-when">D+7 · Check-in</div>
+        <div class="tl-title">Pós-cirurgia</div>
+        <div class="tl-desc">Liga pra confirmar que o pet está bem. "Está tudo certo? Precisa de alguma coisa?"</div>
+      </div>
+    </div>
+    <p style="margin-top: 1.6rem; font-size: 0.95rem; color: rgba(169,214,232,0.75); text-align: center; max-width: 900px;">
+      <strong style="color: var(--gold-light);">Quem liga primeiro</strong> é a recepção, não o tutor. Esse é o jeito do São Bernardo.
+    </p>
+  </section>
+
+  <!-- 14 — MÓDULO 5: AVALIAÇÃO GOOGLE -->
+  <section class="slide">
+    <div class="module-num">Módulo 05</div>
+    <h2>A meta</h2>
+    <div class="meta-big">
+      <div class="num-huge">120</div>
+      <div class="num-lbl">Avaliações 5 estrelas no Google</div>
+      <p style="font-size: 1.05rem; color: rgba(255,255,255,0.88); max-width: 700px; margin: 0 auto;">
+        É o que falta pra gente subir de <strong style="color: var(--gold);">4,6 ★</strong> pra <strong style="color: var(--gold);">4,7 ★</strong> e ficar no nível dos melhores hospitais veterinários de Curitiba. Cada estrela conta.
+      </p>
+      <div class="meta-stats">
+        <div class="meta-stat"><div class="val">4.6★</div><div class="lbl">Nota atual</div></div>
+        <div class="meta-stat"><div class="val" style="color: var(--gold);">4.7★</div><div class="lbl">Meta</div></div>
+        <div class="meta-stat"><div class="val">≈4/dia</div><div class="lbl">Ritmo necessário</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 15 — QUANDO E COMO PEDIR -->
+  <section class="slide">
+    <span class="tag gold">O momento certo</span>
+    <h2>Como pedir avaliação no Google</h2>
+    <p style="max-width: 900px; text-align: center; margin-bottom: 1.2rem; color: rgba(255,255,255,0.85);">
+      Não é mandar o link pra todo mundo no WhatsApp <em>dois dias depois</em>. O pedido tem que ser <strong style="color: var(--gold-light);">no balcão, na hora do checkout</strong>, com filtro. Assim:
+    </p>
+    <div style="max-width: 1000px; width: 100%;">
+      <div class="script-box">
+        <div class="role">Passo 1 · O filtro</div>
+        <p>E aí, como foi o atendimento do [nome do pet] hoje? Conseguimos resolver tudo que vocês precisavam?</p>
+      </div>
+      <div class="script-box" style="border-left-color: var(--green);">
+        <div class="role" style="color: var(--green-light);">Passo 2A · Se a resposta for POSITIVA</div>
+        <p>Que bom! Olha, a gente tá numa meta de avaliações no Google esse mês. Você consegue avaliar com 5 estrelinhas pra mim? Vou te mandar o link aqui no WhatsApp agora mesmo, é super rápido.</p>
+      </div>
+      <div class="script-box" style="border-left-color: var(--red-light);">
+        <div class="role" style="color: var(--red-light);">Passo 2B · Se a resposta for NEGATIVA</div>
+        <p>Nossa, me conta o que aconteceu pra gente poder melhorar. É muito importante isso pra gente. <em>(Não pede review. Anota o problema, leva pra Letícia.)</em></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 16 — MÓDULO 6: ROLEPLAY -->
+  <section class="slide">
+    <div class="module-num">Módulo 06</div>
+    <h2>Bora treinar na prática</h2>
+    <p style="max-width: 900px; text-align: center; margin-bottom: 1rem; font-size: 1.1rem;">
+      Vamos fazer 4 roleplays agora. Uma de vocês é a recepcionista, outra é a tutora. <strong style="color: var(--gold-light);">Sem julgamento</strong> — o objetivo é treinar a voz, o tom, o acolhimento.
+    </p>
+    <div class="pillars" style="margin-top: 1.6rem;">
+      <div class="pillar-card" style="border-top: 3px solid var(--red);">
+        <div class="pillar-num" style="color: var(--red-light); font-size: 1.6rem;">Cenário 1</div>
+        <div class="pillar-title">Crise convulsiva</div>
+        <div class="pillar-desc">Tutora desesperada, pet teve uma convulsão agora. Está em casa, sem carro. Treina: acolhimento, decisão rápida.</div>
+      </div>
+      <div class="pillar-card" style="border-top: 3px solid var(--blue);">
+        <div class="pillar-num" style="color: var(--blue-light); font-size: 1.6rem;">Cenário 2</div>
+        <div class="pillar-title">"Tá caro"</div>
+        <div class="pillar-desc">Tutor pede orçamento de consulta. Ouve o valor e diz "tá caro, vou pesquisar". Treina: tratamento de objeção sem ser invasivo.</div>
+      </div>
+      <div class="pillar-card" style="border-top: 3px solid var(--gold);">
+        <div class="pillar-num" style="color: var(--gold); font-size: 1.6rem;">Cenário 3</div>
+        <div class="pillar-title">Tutor frustrado</div>
+        <div class="pillar-desc">Cliente liga reclamando que o exame demorou. Treina: como recuperar a confiança e evitar review negativa.</div>
+      </div>
+    </div>
+    <div class="pillars" style="margin-top: 1rem; grid-template-columns: 1fr; max-width: 600px;">
+      <div class="pillar-card" style="border-top: 3px solid var(--green);">
+        <div class="pillar-num" style="color: var(--green-light); font-size: 1.6rem;">Cenário 4</div>
+        <div class="pillar-title">Pedido de avaliação Google</div>
+        <div class="pillar-desc">Tutora satisfeita está saindo do balcão depois da consulta. Treina: o filtro + pedido natural de review 5 estrelas.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 17 — KPIS POR RECEPCIONISTA -->
+  <section class="slide">
+    <div class="module-num">Módulo 07</div>
+    <h2>O que vai ser acompanhado</h2>
+    <p style="max-width: 900px; text-align: center; margin-bottom: 1rem; color: rgba(255,255,255,0.82);">
+      A Letícia vai acompanhar esses indicadores <strong style="color: var(--gold-light);">por recepcionista, todo mês</strong>. Não é cobrança — é jeito de identificar onde a gente pode ajudar quem está com mais dificuldade.
+    </p>
+    <table class="kpi-table">
+      <thead>
+        <tr>
+          <th>Indicador</th>
+          <th class="r">Meta mensal</th>
+          <th>Como mede</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Ligações atendidas / agendadas</strong></td>
+          <td class="r meta-val">≥ 60%</td>
+          <td>Quantas ligações viraram consulta marcada</td>
+        </tr>
+        <tr>
+          <td><strong>Reviews 5★ solicitadas / recebidas</strong></td>
+          <td class="r meta-val">30 / mês</td>
+          <td>Pedidas no balcão + link enviado</td>
+        </tr>
+        <tr>
+          <td><strong>Tempo médio de atendimento</strong></td>
+          <td class="r meta-val">≤ 3min ligação</td>
+          <td>Sem deixar tutor em espera longa</td>
+        </tr>
+        <tr>
+          <td><strong>Exames sem retorno proativo</strong></td>
+          <td class="r meta-val">0 (zero!)</td>
+          <td>Tutor não pode esperar a gente ligar</td>
+        </tr>
+        <tr>
+          <td><strong>Auditoria mensal</strong></td>
+          <td class="r meta-val">5 ligações</td>
+          <td>Letícia escuta 5 ligações de cada uma e dá feedback</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- 18 — RECAP -->
+  <section class="slide">
+    <span class="tag green">Antes de fechar</span>
+    <h2>Os 5 hábitos que mudam tudo</h2>
+    <div class="pillars">
+      <div class="pillar-card">
+        <div class="pillar-num">01</div>
+        <div class="pillar-title">Sorriso antes do "alô"</div>
+        <div class="pillar-desc">Sorria de verdade antes de atender. O tutor escuta o sorriso na voz.</div>
+      </div>
+      <div class="pillar-card">
+        <div class="pillar-num">02</div>
+        <div class="pillar-title">Acolhe antes de processar</div>
+        <div class="pillar-desc">Primeiro acolhe a emoção do tutor. Depois pede dados, marca horário, resolve.</div>
+      </div>
+      <div class="pillar-card">
+        <div class="pillar-num">03</div>
+        <div class="pillar-title">Liga primeiro</div>
+        <div class="pillar-desc">Exame ficou pronto? Você liga. Pós-cirurgia? Você liga. Tutor sumiu? Você liga.</div>
+      </div>
+      <div class="pillar-card">
+        <div class="pillar-num">04</div>
+        <div class="pillar-title">Pede review no balcão</div>
+        <div class="pillar-desc">Com filtro, na hora, com o link pronto. Não depois, não em massa.</div>
+      </div>
+      <div class="pillar-card">
+        <div class="pillar-num">05</div>
+        <div class="pillar-title">Cada cliente é único</div>
+        <div class="pillar-desc">Use o nome do pet, lembre quem é o tutor antigo, trate como família.</div>
+      </div>
+      <div class="pillar-card" style="border: 1px solid var(--gold); background: rgba(212,163,64,0.08);">
+        <div class="pillar-num" style="color: var(--gold);">⚡</div>
+        <div class="pillar-title" style="color: var(--gold);">Lembre sempre</div>
+        <div class="pillar-desc">A recepção é o coração do hospital. <strong style="color: var(--white);">Sem você, todo o resto não funciona.</strong></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 19 — ENCERRAMENTO -->
+  <section class="slide">
+    <div class="closing">
+      <span class="tag green">Encerramento</span>
+      <span class="script-accent">a voz que</span>
+      <h2>Acolhe, cuida e<br>traz o tutor de volta</h2>
+      <p>
+        A gente pode investir o que for em anúncio. <strong>Mas se a ligação não acolhe,</strong> o tutor não vem, não volta, e não indica.
+      </p>
+      <p style="color:rgba(169,214,232,0.85); font-size:1rem;">
+        Daqui pra frente vamos escutar 5 ligações de cada uma de vocês todo mês, dar feedback construtivo e ir ajustando juntas. <strong style="color: var(--gold-light);">O objetivo não é cobrança — é crescer junto.</strong>
+      </p>
+      <div class="signature">Sigma · HVSB · Treinamento 03 · 2026</div>
+    </div>
+  </section>
+
+</div>
+
+<div class="slide-counter">
+  <span class="current" id="current">01</span> · <span id="total">21</span>
+</div>
+<div class="nav-controls">
+  <button class="nav-btn" id="prev">‹</button>
+  <button class="nav-btn" id="next">›</button>
+</div>
+
+<script>
+const slides = document.querySelectorAll('.slide');
+const total = slides.length;
+const currentEl = document.getElementById('current');
+const totalEl = document.getElementById('total');
+const progressEl = document.getElementById('progress');
+const prevBtn = document.getElementById('prev');
+const nextBtn = document.getElementById('next');
+let current = 0;
+
+totalEl.textContent = String(total).padStart(2, '0');
+
+function go(idx) {
+  if (idx < 0 || idx >= total) return;
+  slides[current].classList.remove('active');
+  if (idx < current) slides[current].classList.add('prev');
+  else slides[current].classList.remove('prev');
+  current = idx;
+  slides[current].classList.add('active');
+  slides[current].classList.remove('prev');
+  currentEl.textContent = String(current + 1).padStart(2, '0');
+  progressEl.style.width = ((current + 1) / total * 100) + '%';
+  prevBtn.disabled = current === 0;
+  nextBtn.disabled = current === total - 1;
+}
+
+prevBtn.addEventListener('click', () => go(current - 1));
+nextBtn.addEventListener('click', () => go(current + 1));
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') { e.preventDefault(); go(current + 1); }
+  if (e.key === 'ArrowLeft'  || e.key === 'PageUp')                    { e.preventDefault(); go(current - 1); }
+  if (e.key === 'Home') go(0);
+  if (e.key === 'End')  go(total - 1);
+});
+
+let touchStartX = 0;
+document.addEventListener('touchstart', e => touchStartX = e.changedTouches[0].screenX);
+document.addEventListener('touchend', e => {
+  const diff = e.changedTouches[0].screenX - touchStartX;
+  if (Math.abs(diff) > 50) diff < 0 ? go(current + 1) : go(current - 1);
+});
+
+progressEl.style.width = (1 / total * 100) + '%';
+prevBtn.disabled = true;
+</script>
+
+</body>
+</html>

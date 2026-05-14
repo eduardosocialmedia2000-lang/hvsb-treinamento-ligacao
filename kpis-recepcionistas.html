@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KPIs Recepção · Acompanhamento Mensal | HVSB</title>
+<link rel="icon" type="image/svg+xml" href="https://static.wixstatic.com/shapes/167cba_c76d768559744f90b364541c6ff3aa51.svg">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+:root {
+  --navy:     #0A3D5F;
+  --blue:     #1B6FB8;
+  --blue-l:   #A9D6E8;
+  --bg-page:  #F7F9FC;
+  --bg-card:  #FFFFFF;
+  --gold:     #C68820;
+  --gold-bg:  #FFF8E1;
+  --red:      #B5363B;
+  --red-bg:   #FBEDED;
+  --green:    #3B8467;
+  --green-bg: #E6F4EE;
+  --gray-9:   #0F1A24;
+  --gray-7:   #374151;
+  --gray-6:   #4B5563;
+  --gray-5:   #6B7280;
+  --gray-3:   #D1D5DB;
+  --gray-2:   #E5E7EB;
+  --gray-1:   #F3F4F6;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: 'Inter', sans-serif;
+  background: var(--bg-page);
+  color: var(--gray-9);
+  line-height: 1.55;
+  font-size: 15px;
+}
+
+.container { max-width: 1100px; margin: 0 auto; padding: 2.5rem 2rem 4rem; }
+
+header.hero {
+  background: linear-gradient(135deg, var(--navy) 0%, var(--blue) 100%);
+  color: white;
+  padding: 2.5rem 2.2rem;
+  border-radius: 8px;
+  margin-bottom: 2.5rem;
+  display: flex; align-items: center; justify-content: space-between;
+  flex-wrap: wrap; gap: 1.2rem;
+}
+.hero .tag {
+  display: inline-block;
+  background: rgba(255,255,255,0.15);
+  border: 1px solid rgba(255,255,255,0.3);
+  padding: 0.25rem 0.7rem;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  border-radius: 2px;
+  margin-bottom: 0.7rem;
+}
+.hero h1 {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 800;
+  font-size: clamp(1.5rem, 2.5vw, 2rem);
+  line-height: 1.1;
+  margin-bottom: 0.4rem;
+}
+.hero p { font-size: 0.95rem; opacity: 0.88; max-width: 500px; }
+.hero .month-pill {
+  background: rgba(255,255,255,0.18);
+  border: 1px solid rgba(255,255,255,0.3);
+  padding: 0.7rem 1.2rem;
+  border-radius: 6px;
+  text-align: center;
+}
+.hero .month-pill .lbl { font-size: 0.6rem; letter-spacing: 0.2em; text-transform: uppercase; opacity: 0.8; }
+.hero .month-pill .val { font-family: 'Montserrat', sans-serif; font-weight: 800; font-size: 1.3rem; }
+
+/* META GLOBAL */
+.meta-global {
+  background: var(--bg-card);
+  border: 1px solid var(--gray-2);
+  border-radius: 8px;
+  padding: 1.8rem 2rem;
+  margin-bottom: 2rem;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.2rem;
+}
+.meta-card {
+  text-align: left;
+  padding: 0 0.3rem;
+  border-left: 3px solid var(--blue);
+  padding-left: 1rem;
+}
+.meta-card .lbl {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.62rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--gray-6);
+  font-weight: 700;
+  margin-bottom: 0.4rem;
+}
+.meta-card .num {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 800;
+  font-size: 1.9rem;
+  color: var(--navy);
+  line-height: 1;
+}
+.meta-card .sub {
+  font-size: 0.78rem;
+  color: var(--gray-6);
+  margin-top: 0.3rem;
+}
+.meta-card.gold { border-left-color: var(--gold); }
+.meta-card.gold .num { color: var(--gold); }
+.meta-card.green { border-left-color: var(--green); }
+.meta-card.green .num { color: var(--green); }
+.meta-card.red { border-left-color: var(--red); }
+.meta-card.red .num { color: var(--red); }
+
+/* SECTION */
+section.block {
+  background: var(--bg-card);
+  border: 1px solid var(--gray-2);
+  border-radius: 8px;
+  padding: 1.8rem 2rem;
+  margin-bottom: 1.6rem;
+}
+section.block h2 {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: var(--navy);
+  margin-bottom: 1.2rem;
+  padding-bottom: 0.7rem;
+  border-bottom: 2px solid var(--gray-2);
+}
+section.block h3 {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--gray-9);
+  margin-top: 1.2rem;
+  margin-bottom: 0.6rem;
+}
+
+/* TABELA KPI */
+.tbl {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+.tbl thead th {
+  background: var(--gray-1);
+  border-bottom: 2px solid var(--gray-2);
+  padding: 0.7rem 0.8rem;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--gray-6);
+  text-align: left;
+}
+.tbl thead th.c { text-align: center; }
+.tbl tbody td {
+  border-bottom: 1px solid var(--gray-2);
+  padding: 0.7rem 0.8rem;
+  color: var(--gray-7);
+}
+.tbl tbody td.c { text-align: center; }
+.tbl tbody td.bold { font-weight: 700; color: var(--gray-9); }
+.tbl tbody tr:hover { background: var(--gray-1); }
+.tbl tbody .meta-val {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 800;
+  color: var(--gold);
+}
+
+/* INDIVIDUAL CARD */
+.indiv-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.2rem;
+  margin-top: 1rem;
+}
+.indiv-card {
+  background: var(--bg-page);
+  border: 1px solid var(--gray-2);
+  border-radius: 6px;
+  padding: 1.2rem 1.3rem;
+}
+.indiv-card h4 {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 1rem;
+  font-weight: 800;
+  color: var(--navy);
+  margin-bottom: 0.8rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--gray-2);
+}
+.indiv-row {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 0.45rem 0;
+  border-bottom: 1px dashed var(--gray-2);
+  font-size: 0.88rem;
+}
+.indiv-row:last-of-type { border-bottom: none; }
+.indiv-row .lbl { color: var(--gray-6); }
+.indiv-row .val {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 700;
+  color: var(--gray-9);
+  background: var(--gray-1);
+  padding: 0.15rem 0.7rem;
+  border-radius: 3px;
+  min-width: 60px;
+  text-align: center;
+}
+.indiv-row .val.fill {
+  border: 1px dashed var(--gray-3);
+  background: white;
+  color: var(--gray-5);
+  font-style: italic;
+  font-weight: 400;
+}
+.indiv-feedback {
+  margin-top: 1rem;
+  padding: 0.8rem 1rem;
+  background: white;
+  border: 1px dashed var(--gray-3);
+  border-radius: 4px;
+  min-height: 70px;
+  font-size: 0.85rem;
+  color: var(--gray-5);
+  font-style: italic;
+}
+
+/* AUDITORIA */
+.audit-row {
+  display: grid;
+  grid-template-columns: 30px 1fr 100px 1fr;
+  gap: 1rem;
+  align-items: center;
+  padding: 0.6rem 0;
+  border-bottom: 1px dashed var(--gray-2);
+  font-size: 0.88rem;
+}
+.audit-row:last-of-type { border-bottom: none; }
+.audit-row .n {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 800;
+  color: var(--blue);
+  text-align: center;
+}
+.audit-row .date {
+  font-size: 0.82rem;
+  color: var(--gray-5);
+  text-align: center;
+}
+.audit-row .field {
+  border-bottom: 1px solid var(--gray-3);
+  padding: 0.3rem 0.4rem;
+  color: var(--gray-5);
+  font-style: italic;
+  font-size: 0.85rem;
+}
+
+/* NOTAS */
+.notas {
+  background: var(--gold-bg);
+  border-left: 4px solid var(--gold);
+  padding: 1rem 1.3rem;
+  border-radius: 0 4px 4px 0;
+  margin-top: 1rem;
+  font-size: 0.92rem;
+  color: var(--gray-7);
+}
+.notas strong { color: var(--navy); }
+
+footer.foot {
+  text-align: center;
+  margin-top: 2.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--gray-2);
+  font-size: 0.82rem;
+  color: var(--gray-5);
+}
+
+@media print {
+  body { background: white; font-size: 11pt; }
+  .container { padding: 0; }
+  section.block, .meta-global { box-shadow: none; border: 1px solid #ccc; break-inside: avoid; }
+  header.hero { background: var(--navy); }
+}
+
+@media (max-width: 768px) {
+  .container { padding: 1.5rem 1rem; }
+  .meta-global { grid-template-columns: 1fr 1fr; }
+  .indiv-grid { grid-template-columns: 1fr; }
+  .audit-row { grid-template-columns: 30px 1fr; }
+  .audit-row .date, .audit-row .field { display: none; }
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <header class="hero">
+    <div>
+      <div class="tag">Acompanhamento mensal · Letícia</div>
+      <h1>KPIs da Recepção · São Bernardo</h1>
+      <p>Folha de acompanhamento individual por recepcionista. Preencher ao fim de cada mês com base em auditoria das ligações e dados do sistema.</p>
+    </div>
+    <div class="month-pill">
+      <div class="lbl">Mês de referência</div>
+      <div class="val">_________ / 2026</div>
+    </div>
+  </header>
+
+  <!-- META GLOBAL DO MÊS -->
+  <div class="meta-global">
+    <div class="meta-card gold">
+      <div class="lbl">Meta de reviews 5★</div>
+      <div class="num">120</div>
+      <div class="sub">no mês, time todo</div>
+    </div>
+    <div class="meta-card">
+      <div class="lbl">Por recepcionista</div>
+      <div class="num">30</div>
+      <div class="sub">reviews/mês</div>
+    </div>
+    <div class="meta-card green">
+      <div class="lbl">Taxa de conversão</div>
+      <div class="num">≥ 60%</div>
+      <div class="sub">ligação → consulta</div>
+    </div>
+    <div class="meta-card red">
+      <div class="lbl">Exames sem retorno</div>
+      <div class="num">0</div>
+      <div class="sub">tolerância zero</div>
+    </div>
+  </div>
+
+  <!-- KPIs CONSOLIDADOS -->
+  <section class="block">
+    <h2>Indicadores acompanhados todo mês</h2>
+    <table class="tbl">
+      <thead>
+        <tr>
+          <th>Indicador</th>
+          <th class="c">Meta mensal</th>
+          <th>Como é medido</th>
+          <th class="c">Origem do dado</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="bold">Ligações atendidas / agendadas</td>
+          <td class="c meta-val">≥ 60%</td>
+          <td>% de ligações de agendamento que viraram consulta marcada</td>
+          <td class="c">Sistema + planilha</td>
+        </tr>
+        <tr>
+          <td class="bold">Reviews 5★ solicitadas no balcão</td>
+          <td class="c meta-val">≥ 50</td>
+          <td>Quantos tutores foram filtrados e receberam o link Google</td>
+          <td class="c">Anotação diária</td>
+        </tr>
+        <tr>
+          <td class="bold">Reviews 5★ efetivamente recebidas</td>
+          <td class="c meta-val">≥ 30</td>
+          <td>Reviews novas no perfil Google atribuídas àquela recepcionista</td>
+          <td class="c">Google Meu Negócio</td>
+        </tr>
+        <tr>
+          <td class="bold">Tempo médio em ligação de emergência</td>
+          <td class="c meta-val">≤ 3 min</td>
+          <td>Da atendida até o "vem pra cá" / desligamento</td>
+          <td class="c">Auditoria</td>
+        </tr>
+        <tr>
+          <td class="bold">Exames sem retorno proativo</td>
+          <td class="c meta-val">0</td>
+          <td>Tutores que tiveram exame e não foram contatados</td>
+          <td class="c">Cruzar prontuário × CRM</td>
+        </tr>
+        <tr>
+          <td class="bold">Confirmações D-1 enviadas</td>
+          <td class="c meta-val">100%</td>
+          <td>Agendamentos do dia seguinte confirmados via WhatsApp</td>
+          <td class="c">CRM</td>
+        </tr>
+        <tr>
+          <td class="bold">Reclamações registradas</td>
+          <td class="c meta-val">Reportar</td>
+          <td>Qualquer reclamação durante o mês — anotar e levar pra Letícia</td>
+          <td class="c">Anotação</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="notas">
+      <strong>Como esses números viram ação:</strong> auditoria mensal de 5 ligações por recepcionista. A Letícia escuta, anota o que tá bom e o que precisa melhorar, e dá feedback individual. Sem julgamento, sem cobrança pública.
+    </div>
+  </section>
+
+  <!-- ACOMPANHAMENTO INDIVIDUAL -->
+  <section class="block">
+    <h2>Acompanhamento individual · este mês</h2>
+    <p style="color: var(--gray-6); font-size: 0.92rem; margin-bottom: 1.2rem;">
+      Substituir os nomes pelos das recepcionistas em exercício. Preencher os valores ao fim do mês.
+    </p>
+
+    <div class="indiv-grid">
+
+      <div class="indiv-card">
+        <h4>Recepcionista 1 · ____________________</h4>
+        <div class="indiv-row"><span class="lbl">Ligações atendidas</span><span class="val fill">___</span></div>
+        <div class="indiv-row"><span class="lbl">Agendamentos fechados</span><span class="val fill">___</span></div>
+        <div class="indiv-row"><span class="lbl">Taxa de conversão</span><span class="val fill">___ %</span></div>
+        <div class="indiv-row"><span class="lbl">Reviews 5★ solicitadas</span><span class="val fill">___</span></div>
+        <div class="indiv-row"><span class="lbl">Reviews 5★ recebidas</span><span class="val fill">___</span></div>
+        <div class="indiv-row"><span class="lbl">Exames sem retorno</span><span class="val fill">___</span></div>
+        <div class="indiv-row"><span class="lbl">Confirmações D-1</span><span class="val fill">___ %</span></div>
+        <div class="indiv-feedback">Feedback / pontos da auditoria...</div>
+      </div>
+
+      <div class="indiv-card">
+        <h4>Recepcionista 2 · ____________________</h4>
+        <div class="indiv-row"><span class="lbl">Ligações atendidas</span><span class="val fill">___</span></div>
+        <div class="indiv-row"><span class="lbl">Agendamentos fechados</span><span class="val fill">___</span></div>
+        <div class="indiv-row"><span class="lbl">Taxa de conversão</span><span class="val fill">___ %</span></div>
+        <div class="indiv-row"><span class="lbl">Reviews 5★ solicitadas</span><span class="val fill">___</span></div>
+        <div class="indiv-row"><span class="lbl">Reviews 5★ recebidas</span><span class="val fill">___</span></div>
+        <div class="indiv-row"><span class="lbl">Exames sem retorno</span><span class="val fill">___</span></div>
+        <div class="indiv-row"><span class="lbl">Confirmações D-1</span><span class="val fill">___ %</span></div>
+        <div class="indiv-feedback">Feedback / pontos da auditoria...</div>
+      </div>
+
+      <div class="indiv-card">
+        <h4>Recepcionista 3 · ____________________</h4>
+        <div class="indiv-row"><span class="lbl">Ligações atendidas</span><span class="val fill">___</span></div>
+        <div class="indiv-row"><span class="lbl">Agendamentos fechados</span><span class="val fill">___</span></div>
+        <div class="indiv-row"><span class="lbl">Taxa de conversão</span><span class="val fill">___ %</span></div>
+        <div class="indiv-row"><span class="lbl">Reviews 5★ solicitadas</span><span class="val fill">___</span></div>
+        <div class="indiv-row"><span class="lbl">Reviews 5★ recebidas</span><span class="val fill">___</span></div>
+        <div class="indiv-row"><span class="lbl">Exames sem retorno</span><span class="val fill">___</span></div>
+        <div class="indiv-row"><span class="lbl">Confirmações D-1</span><span class="val fill">___ %</span></div>
+        <div class="indiv-feedback">Feedback / pontos da auditoria...</div>
+      </div>
+
+      <div class="indiv-card">
+        <h4>Recepcionista 4 · ____________________</h4>
+        <div class="indiv-row"><span class="lbl">Ligações atendidas</span><span class="val fill">___</span></div>
+        <div class="indiv-row"><span class="lbl">Agendamentos fechados</span><span class="val fill">___</span></div>
+        <div class="indiv-row"><span class="lbl">Taxa de conversão</span><span class="val fill">___ %</span></div>
+        <div class="indiv-row"><span class="lbl">Reviews 5★ solicitadas</span><span class="val fill">___</span></div>
+        <div class="indiv-row"><span class="lbl">Reviews 5★ recebidas</span><span class="val fill">___</span></div>
+        <div class="indiv-row"><span class="lbl">Exames sem retorno</span><span class="val fill">___</span></div>
+        <div class="indiv-row"><span class="lbl">Confirmações D-1</span><span class="val fill">___ %</span></div>
+        <div class="indiv-feedback">Feedback / pontos da auditoria...</div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- FOLHA DE AUDITORIA -->
+  <section class="block">
+    <h2>Auditoria mensal · 5 ligações por recepcionista</h2>
+    <p style="color: var(--gray-6); font-size: 0.92rem; margin-bottom: 1.2rem;">
+      Letícia escolhe 5 ligações de cada recepcionista no mês e preenche abaixo. Foco em padrão de abertura, acolhimento, fechamento e pedido de avaliação.
+    </p>
+
+    <h3>Recepcionista: _______________________</h3>
+    <div style="margin-top: 0.8rem;">
+      <div class="audit-row" style="font-weight: 700; color: var(--gray-6); font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase; border-bottom: 2px solid var(--gray-2); padding-bottom: 0.5rem;">
+        <div class="n">#</div>
+        <div>Tipo da ligação</div>
+        <div class="date">Data</div>
+        <div>Observação / nota</div>
+      </div>
+      <div class="audit-row">
+        <div class="n">1</div>
+        <div class="field">_____________________________</div>
+        <div class="field">___/___/___</div>
+        <div class="field">_____________________________</div>
+      </div>
+      <div class="audit-row">
+        <div class="n">2</div>
+        <div class="field">_____________________________</div>
+        <div class="field">___/___/___</div>
+        <div class="field">_____________________________</div>
+      </div>
+      <div class="audit-row">
+        <div class="n">3</div>
+        <div class="field">_____________________________</div>
+        <div class="field">___/___/___</div>
+        <div class="field">_____________________________</div>
+      </div>
+      <div class="audit-row">
+        <div class="n">4</div>
+        <div class="field">_____________________________</div>
+        <div class="field">___/___/___</div>
+        <div class="field">_____________________________</div>
+      </div>
+      <div class="audit-row">
+        <div class="n">5</div>
+        <div class="field">_____________________________</div>
+        <div class="field">___/___/___</div>
+        <div class="field">_____________________________</div>
+      </div>
+    </div>
+
+    <div class="notas">
+      <strong>Itens a observar em cada ligação:</strong> abertura correta com nome? Acolheu antes de processar? Usou o nome do pet? Pediu review 5★ no balcão (se aplicável)? Direcionou e confirmou via WhatsApp?
+    </div>
+  </section>
+
+  <footer class="foot">
+    Hospital Veterinário São Bernardo · Curitiba · Acompanhamento Recepção · 2026
+  </footer>
+
+</div>
+
+</body>
+</html>

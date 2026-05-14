@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Script de Ligação · Recepção HVSB</title>
+<link rel="icon" type="image/svg+xml" href="https://static.wixstatic.com/shapes/167cba_c76d768559744f90b364541c6ff3aa51.svg">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+:root {
+  --navy:     #0A3D5F;
+  --blue:     #1B6FB8;
+  --blue-l:   #A9D6E8;
+  --bg-page:  #F7F9FC;
+  --bg-card:  #FFFFFF;
+  --gold:     #C68820;
+  --red:      #B5363B;
+  --red-bg:   #FBEDED;
+  --green:    #3B8467;
+  --green-bg: #E6F4EE;
+  --gray-9:   #0F1A24;
+  --gray-7:   #374151;
+  --gray-6:   #4B5563;
+  --gray-5:   #6B7280;
+  --gray-3:   #D1D5DB;
+  --gray-2:   #E5E7EB;
+  --gray-1:   #F3F4F6;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'Inter', sans-serif;
+  background: var(--bg-page);
+  color: var(--gray-9);
+  line-height: 1.6;
+  font-size: 16px;
+}
+
+.container { max-width: 880px; margin: 0 auto; padding: 3rem 2rem 5rem; }
+
+header.hero {
+  background: linear-gradient(135deg, var(--navy) 0%, var(--blue) 100%);
+  color: white;
+  padding: 3.5rem 2.5rem;
+  border-radius: 8px;
+  margin-bottom: 3rem;
+  position: relative;
+  overflow: hidden;
+}
+header.hero::before {
+  content: '';
+  position: absolute;
+  top: -50px; right: -50px;
+  width: 200px; height: 200px;
+  background: radial-gradient(circle, rgba(169,214,232,0.2) 0%, transparent 70%);
+}
+.hero .tag {
+  display: inline-block;
+  background: rgba(255,255,255,0.15);
+  border: 1px solid rgba(255,255,255,0.3);
+  padding: 0.3rem 0.8rem;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  border-radius: 2px;
+  margin-bottom: 1rem;
+}
+.hero h1 {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 800;
+  font-size: clamp(2rem, 4vw, 2.8rem);
+  line-height: 1.1;
+  margin-bottom: 0.6rem;
+}
+.hero p {
+  font-size: 1.05rem;
+  opacity: 0.9;
+  max-width: 600px;
+}
+
+nav.toc {
+  background: var(--bg-card);
+  border: 1px solid var(--gray-2);
+  border-radius: 8px;
+  padding: 1.5rem 1.8rem;
+  margin-bottom: 3rem;
+}
+nav.toc h3 {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--gray-6);
+  margin-bottom: 1rem;
+}
+nav.toc ol {
+  list-style: none;
+  counter-reset: toc;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.5rem 1.5rem;
+}
+nav.toc li {
+  counter-increment: toc;
+  font-size: 0.95rem;
+}
+nav.toc li::before {
+  content: counter(toc, decimal-leading-zero) '. ';
+  color: var(--blue);
+  font-weight: 700;
+  margin-right: 0.4rem;
+}
+nav.toc a { color: var(--gray-7); text-decoration: none; }
+nav.toc a:hover { color: var(--blue); }
+
+section.module {
+  background: var(--bg-card);
+  border: 1px solid var(--gray-2);
+  border-radius: 8px;
+  padding: 2rem 2.2rem;
+  margin-bottom: 2rem;
+}
+section.module h2 {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--navy);
+  margin-bottom: 1.2rem;
+  padding-bottom: 0.8rem;
+  border-bottom: 2px solid var(--gray-2);
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+}
+section.module h2 .num {
+  background: var(--blue);
+  color: white;
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.85rem;
+  font-weight: 800;
+}
+section.module h3 {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--gray-9);
+  margin-top: 1.5rem;
+  margin-bottom: 0.8rem;
+}
+section.module p { margin-bottom: 0.9rem; color: var(--gray-7); }
+section.module ul { margin: 0.6rem 0 1rem 1.2rem; }
+section.module ul li { margin-bottom: 0.4rem; color: var(--gray-7); }
+
+.script-card {
+  border-left: 4px solid var(--blue);
+  background: var(--gray-1);
+  padding: 1.1rem 1.4rem;
+  margin: 0.8rem 0;
+  border-radius: 0 4px 4px 0;
+}
+.script-card .role {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--blue);
+  margin-bottom: 0.4rem;
+}
+.script-card .speech {
+  font-style: italic;
+  font-size: 1rem;
+  color: var(--gray-9);
+  line-height: 1.55;
+}
+.script-card.green { border-left-color: var(--green); background: var(--green-bg); }
+.script-card.green .role { color: var(--green); }
+.script-card.red   { border-left-color: var(--red); background: var(--red-bg); }
+.script-card.red   .role { color: var(--red); }
+.script-card.gold  { border-left-color: var(--gold); background: #FAF3E0; }
+.script-card.gold  .role { color: var(--gold); }
+
+.do-dont {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin: 1rem 0;
+}
+.do-card, .dont-card {
+  padding: 1rem 1.2rem;
+  border-radius: 6px;
+  border: 1px solid;
+}
+.do-card { background: var(--green-bg); border-color: rgba(59,132,103,0.3); }
+.dont-card { background: var(--red-bg); border-color: rgba(181,54,59,0.3); }
+.do-card h4, .dont-card h4 {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  margin-bottom: 0.6rem;
+}
+.do-card h4 { color: var(--green); }
+.dont-card h4 { color: var(--red); }
+.do-card ul, .dont-card ul { list-style: none; margin: 0; padding: 0; }
+.do-card li, .dont-card li {
+  font-size: 0.92rem;
+  padding-left: 1.2rem;
+  position: relative;
+  margin-bottom: 0.4rem;
+  color: var(--gray-7);
+}
+.do-card li::before  { content: '✓'; position: absolute; left: 0; color: var(--green); font-weight: 700; }
+.dont-card li::before { content: '✗'; position: absolute; left: 0; color: var(--red); font-weight: 700; }
+
+.callout {
+  background: #FFF8E1;
+  border-left: 4px solid var(--gold);
+  padding: 1rem 1.3rem;
+  border-radius: 0 4px 4px 0;
+  margin: 1.2rem 0;
+  font-size: 0.95rem;
+  color: var(--gray-7);
+}
+.callout strong { color: var(--navy); }
+
+.checklist {
+  background: var(--gray-1);
+  border-radius: 6px;
+  padding: 1.2rem 1.4rem;
+  margin: 1rem 0;
+}
+.checklist h4 {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--blue);
+  margin-bottom: 0.7rem;
+}
+.checklist ul { list-style: none; margin: 0; padding: 0; }
+.checklist li {
+  padding-left: 1.8rem;
+  position: relative;
+  margin-bottom: 0.5rem;
+  font-size: 0.95rem;
+  color: var(--gray-7);
+}
+.checklist li::before {
+  content: '☐';
+  position: absolute;
+  left: 0;
+  color: var(--blue);
+  font-size: 1.2rem;
+  line-height: 1;
+}
+
+footer.print-note {
+  text-align: center;
+  margin-top: 3rem;
+  padding-top: 2rem;
+  border-top: 1px solid var(--gray-2);
+  font-size: 0.85rem;
+  color: var(--gray-5);
+}
+
+@media print {
+  body { background: white; font-size: 11pt; }
+  .container { padding: 0; }
+  section.module { break-inside: avoid; box-shadow: none; border: 1px solid #ccc; }
+  nav.toc { display: none; }
+}
+
+@media (max-width: 640px) {
+  .container { padding: 1.5rem 1rem; }
+  nav.toc ol { grid-template-columns: 1fr; }
+  .do-dont { grid-template-columns: 1fr; }
+  header.hero { padding: 2rem 1.5rem; }
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <header class="hero">
+    <div class="tag">Script de Consulta · Recepção</div>
+    <h1>Como atender uma ligação no<br>Hospital Veterinário São Bernardo</h1>
+    <p>Documento de apoio. Deixe perto do telefone. Em caso de dúvida em qualquer momento da ligação, consulte aqui.</p>
+  </header>
+
+  <nav class="toc">
+    <h3>O que você encontra aqui</h3>
+    <ol>
+      <li><a href="#abertura">Abertura padrão (5 segundos)</a></li>
+      <li><a href="#triagem">Triagem · qual tipo de ligação é</a></li>
+      <li><a href="#emergencia">Atendimento de emergência 24h</a></li>
+      <li><a href="#agendamento">Agendamento eletivo</a></li>
+      <li><a href="#retorno">Retorno de exame e pós-atendimento</a></li>
+      <li><a href="#objecoes">Tratamento de objeções comuns</a></li>
+      <li><a href="#review">Pedido de avaliação Google</a></li>
+      <li><a href="#checklist">Checklist diário da recepção</a></li>
+    </ol>
+  </nav>
+
+  <!-- 01 ABERTURA -->
+  <section class="module" id="abertura">
+    <h2><span class="num">1</span>Abertura padrão (5 segundos)</h2>
+    <p>A abertura é a mesma em qualquer ligação que entra. Sem variação. O cliente precisa identificar imediatamente o hospital e ter contato com quem está atendendo.</p>
+
+    <div class="script-card green">
+      <div class="role">Use sempre</div>
+      <div class="speech">Hospital Veterinário São Bernardo, [seu nome], [bom dia / boa tarde / boa noite].</div>
+    </div>
+
+    <div class="do-dont">
+      <div class="do-card">
+        <h4>Faça</h4>
+        <ul>
+          <li>Sorria antes de atender (o tutor escuta)</li>
+          <li>Atenda até o 3º toque</li>
+          <li>Diga seu nome com clareza</li>
+          <li>Fale com tom firme e leve</li>
+        </ul>
+      </div>
+      <div class="dont-card">
+        <h4>Não faça</h4>
+        <ul>
+          <li>"Alô?" — desorienta o cliente</li>
+          <li>"São Bernardo, bom dia" sem seu nome</li>
+          <li>"Oi, quem fala?" — perdeu o controle</li>
+          <li>Falar com fundo barulhento</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- 02 TRIAGEM -->
+  <section class="module" id="triagem">
+    <h2><span class="num">2</span>Triagem · qual tipo de ligação é</h2>
+    <p>Nos primeiros <strong>15 segundos</strong> você precisa identificar em qual dos 3 tipos a ligação se encaixa. Cada tipo tem tratamento diferente.</p>
+
+    <h3>Como identificar</h3>
+    <ul>
+      <li><strong>Emergência 24h:</strong> tutor agitado, fala rápido, palavras-chave: "convulsão", "sangrando", "atropelado", "atacado", "ingeriu", "não consegue respirar", "está mal".</li>
+      <li><strong>Agendamento eletivo:</strong> tom calmo, perguntas sobre "quanto custa", "como funciona", "quero marcar consulta", "vacina", "banho", "castração".</li>
+      <li><strong>Retorno / pós-atendimento:</strong> menciona um veterinário do hospital, fala em "exame", "resultado", "minha cadela já passou aqui", "retorno".</li>
+    </ul>
+
+    <div class="callout">
+      <strong>Frase universal de transição:</strong> depois da abertura, sempre pergunte <em>"Como posso te ajudar?"</em> e escute pelos próximos 10 segundos. Não interrompa. Deixe o tutor te dar a resposta.
+    </div>
+  </section>
+
+  <!-- 03 EMERGÊNCIA -->
+  <section class="module" id="emergencia">
+    <h2><span class="num">3</span>Atendimento de emergência 24h</h2>
+    <p>O objetivo é <strong>trazer o pet pra cá rapidamente</strong>. Acolha primeiro, processe depois. Cliente em pânico não quer formulário — quer sentir que alguém vai cuidar.</p>
+
+    <h3>Sequência da ligação</h3>
+
+    <div class="script-card">
+      <div class="role">1. Abertura</div>
+      <div class="speech">Hospital Veterinário São Bernardo, [seu nome], [período]. O que está acontecendo?</div>
+    </div>
+
+    <div class="script-card green">
+      <div class="role">2. Acolhimento (enquanto o tutor descreve)</div>
+      <div class="speech">Calma, eu tô aqui, vou te ajudar agora. Me conta o que tá acontecendo com ele.</div>
+    </div>
+
+    <div class="script-card green">
+      <div class="role">3. Triagem rápida — escolha 2 ou 3 perguntas</div>
+      <div class="speech">Há quanto tempo começou? Ele está consciente? Está respirando bem? Você consegue vir agora pra cá?</div>
+    </div>
+
+    <div class="script-card green">
+      <div class="role">4. Direcionamento</div>
+      <div class="speech">Entendi. Vem pra cá agora. Vou avisar a equipe que vocês estão chegando. Estamos te esperando.</div>
+    </div>
+
+    <div class="script-card green">
+      <div class="role">5. Despedida</div>
+      <div class="speech">Vem com cuidado. Qualquer coisa no caminho, liga de novo. Tá tudo bem, vamos cuidar dele aqui.</div>
+    </div>
+
+    <div class="do-dont">
+      <div class="do-card">
+        <h4>Faça</h4>
+        <ul>
+          <li>Use frases curtas e firmes</li>
+          <li>Diga "eu tô aqui" e "vou te ajudar"</li>
+          <li>Avise a equipe interna ANTES de desligar</li>
+          <li>Peça apenas dados mínimos no telefone</li>
+        </ul>
+      </div>
+      <div class="dont-card">
+        <h4>Não faça</h4>
+        <ul>
+          <li>Não diga "vou transferir, espera"</li>
+          <li>Não pergunte preço antes de acolher</li>
+          <li>Não diga "amanhã traz no consultório"</li>
+          <li>Não peça dados longos antes do pet chegar</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- 04 AGENDAMENTO -->
+  <section class="module" id="agendamento">
+    <h2><span class="num">4</span>Agendamento eletivo</h2>
+    <p>Consulta de especialidade, vacina, banho/tosa, castração. O objetivo é qualificar bem o tutor, identificar o que ele realmente precisa, e fechar o agendamento com confirmação no WhatsApp.</p>
+
+    <h3>Perguntas de qualificação (em ordem)</h3>
+    <ul>
+      <li>Qual a idade e raça do pet?</li>
+      <li>Há quanto tempo o problema está acontecendo?</li>
+      <li>Ele já foi atendido em outro veterinário antes?</li>
+      <li>Aqui no São Bernardo, já tem cadastro? Já passou por algum doutor?</li>
+      <li>Como você nos conheceu?</li>
+      <li>Tem alguma preferência ou restrição de horário?</li>
+    </ul>
+
+    <div class="script-card">
+      <div class="role">Sobre preço (não fuja da pergunta)</div>
+      <div class="speech">A consulta com clínico está R$ 200. Se for atendimento de emergência, fica R$ 280. Quer que eu já reserve um horário pra você?</div>
+    </div>
+
+    <div class="script-card gold">
+      <div class="role">Confirmação após agendamento</div>
+      <div class="speech">Pronto, agendei para [dia] às [hora] com o(a) [Dr/Dra X]. Vou te mandar um WhatsApp agora confirmando o horário e o endereço. Pode ser?</div>
+    </div>
+
+    <div class="callout">
+      <strong>Importante:</strong> não desligue sem mandar a confirmação no WhatsApp. Isso evita no-show, dá confiança, e cria registro pra você cobrar lembrete depois.
+    </div>
+  </section>
+
+  <!-- 05 RETORNO -->
+  <section class="module" id="retorno">
+    <h2><span class="num">5</span>Retorno de exame e pós-atendimento</h2>
+    <p>Esse é o tipo de ligação que <strong>você faz primeiro, não o tutor</strong>. É proativa. Sempre que tem exame pronto, pós-cirurgia, retorno em D+30 ou vacina vencendo, a recepção liga.</p>
+
+    <h3>Quando ligar</h3>
+    <ul>
+      <li><strong>Exame ficou pronto:</strong> liga no MESMO dia que o resultado sai. Sem exceção.</li>
+      <li><strong>Pós-cirurgia:</strong> D+1 e D+7, sem falha.</li>
+      <li><strong>Tutor não voltou em 30 dias após procedimento:</strong> liga pra check-in.</li>
+      <li><strong>Vacina ou vermífugo perto de vencer:</strong> liga em D-15.</li>
+    </ul>
+
+    <div class="script-card gold">
+      <div class="role">Ligação de retorno de exame</div>
+      <div class="speech">Oi, [nome do tutor], aqui é a [seu nome] do São Bernardo. O exame da [nome do pet] ficou pronto e a Dra. [X] já analisou. Você consegue vir hoje ou amanhã pra gente fazer o retorno?</div>
+    </div>
+
+    <div class="script-card gold">
+      <div class="role">Ligação de pós-cirurgia (D+1)</div>
+      <div class="speech">Oi, [nome do tutor], aqui é a [seu nome] do São Bernardo. Como o(a) [nome do pet] está hoje? Está se alimentando bem? Conseguiu dormir tranquilo?</div>
+    </div>
+
+    <div class="callout">
+      <strong>Regra de ouro do caso real:</strong> nunca, em nenhuma hipótese, deixe um exame solicitado pela equipe veterinária sem retorno proativo ao tutor. Mesmo se o resultado for negativo. <em>Especialmente</em> se o resultado for negativo — porque pode haver mudança no tratamento.
+    </div>
+  </section>
+
+  <!-- 06 OBJEÇÕES -->
+  <section class="module" id="objecoes">
+    <h2><span class="num">6</span>Tratamento de objeções comuns</h2>
+
+    <h3>"Tá caro"</h3>
+    <div class="script-card">
+      <div class="role">Resposta</div>
+      <div class="speech">Entendo. O valor da consulta inclui [explicar o que está incluído: avaliação completa, prescrição, possibilidade de exame]. A gente trabalha aqui com hospital 24h e equipe especializada, por isso o valor é esse. Quer que eu agende e a gente acerta no dia?</div>
+    </div>
+
+    <h3>"Vou pesquisar outras opções"</h3>
+    <div class="script-card">
+      <div class="role">Resposta</div>
+      <div class="speech">Sem problema, tutor. Posso te mandar nossa apresentação por WhatsApp? Assim você consulta com calma e me chama de volta quando quiser agendar. Qual o seu número?</div>
+    </div>
+
+    <h3>"Não tenho carro / não consigo ir agora"</h3>
+    <div class="script-card">
+      <div class="role">Resposta</div>
+      <div class="speech">Tutor, a gente tem o serviço de atendimento domiciliar para alguns casos. Se for emergência mesmo, vale chamar um Uber Pet — eles são preparados pra transportar animais. Vou te mandar o link do nosso WhatsApp pra você falar com a equipe.</div>
+    </div>
+
+    <h3>"Já passei em outro hospital e não resolveu"</h3>
+    <div class="script-card green">
+      <div class="role">Resposta (acolhe sem desmerecer)</div>
+      <div class="speech">Imagino sua frustração. Olha, a gente tem aqui especialistas em [área correspondente]. Vamos marcar uma consulta e o veterinário avalia com calma, ok? Pode trazer todos os exames que já fez, vai ajudar muito.</div>
+    </div>
+  </section>
+
+  <!-- 07 AVALIAÇÃO GOOGLE -->
+  <section class="module" id="review">
+    <h2><span class="num">7</span>Pedido de avaliação Google</h2>
+    <p>O pedido é <strong>no balcão, no checkout, com filtro</strong>. Não mande link em massa pelo WhatsApp dias depois. Não funciona — e ainda corre risco de virar review negativa.</p>
+
+    <h3>Sequência</h3>
+
+    <div class="script-card">
+      <div class="role">1. Filtro (sempre primeiro)</div>
+      <div class="speech">E aí, como foi o atendimento do [nome do pet] hoje? Conseguimos resolver tudo que vocês precisavam?</div>
+    </div>
+
+    <div class="script-card green">
+      <div class="role">2A. Se a resposta for positiva</div>
+      <div class="speech">Que ótimo de ouvir! Olha, a gente tá numa campanha de avaliações no Google esse mês. Você consegue avaliar a gente com 5 estrelinhas? Vou te mandar o link agora pelo WhatsApp, é super rápido.</div>
+    </div>
+
+    <div class="script-card red">
+      <div class="role">2B. Se a resposta for negativa ou hesitante</div>
+      <div class="speech">Nossa, me conta o que aconteceu. É muito importante a gente saber pra poder melhorar. Vou anotar e levar pra Letícia, ela vai entrar em contato com você. <em>(Não pede review. Encaminha pra correção.)</em></div>
+    </div>
+
+    <div class="callout">
+      <strong>Meta do hospital:</strong> 30 avaliações 5★ por mês × 4 recepcionistas = 120 reviews/mês. Esse é o ritmo necessário pra subir de 4,6★ pra 4,7★.
+    </div>
+  </section>
+
+  <!-- 08 CHECKLIST -->
+  <section class="module" id="checklist">
+    <h2><span class="num">8</span>Checklist diário da recepção</h2>
+
+    <div class="checklist">
+      <h4>Início do turno</h4>
+      <ul>
+        <li>Confirmar agenda do dia (consultas, cirurgias, retornos)</li>
+        <li>Verificar exames que devem ficar prontos hoje</li>
+        <li>Listar tutores em pós-cirurgia (D+1 e D+7) pra ligar</li>
+        <li>Listar vacinas e vermífugos a vencer nos próximos 15 dias</li>
+      </ul>
+    </div>
+
+    <div class="checklist">
+      <h4>Durante o dia</h4>
+      <ul>
+        <li>Atender ligações em até 3 toques, sempre com a abertura padrão</li>
+        <li>Confirmar agendamentos do dia seguinte (D-1) via WhatsApp</li>
+        <li>Ligar pra cada tutor cujo exame ficou pronto</li>
+        <li>Pedir review 5★ no balcão pra cada tutor satisfeito</li>
+        <li>Registrar qualquer reclamação e levar pra Letícia</li>
+      </ul>
+    </div>
+
+    <div class="checklist">
+      <h4>Fim do turno</h4>
+      <ul>
+        <li>Conferir se todos os exames do dia foram comunicados aos tutores</li>
+        <li>Atualizar status das ligações no CRM / planilha</li>
+        <li>Anotar quantas reviews foram solicitadas hoje</li>
+        <li>Passar pendências pro próximo turno</li>
+      </ul>
+    </div>
+  </section>
+
+  <footer class="print-note">
+    Hospital Veterinário São Bernardo · Curitiba · Recepção · 2026<br>
+    Em caso de dúvida, fale com a Letícia. Esse documento é vivo — sugestões são bem-vindas.
+  </footer>
+
+</div>
+
+</body>
+</html>
