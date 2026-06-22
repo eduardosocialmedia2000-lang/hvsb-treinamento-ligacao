@@ -1,0 +1,974 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Atendimento Telefônico · Turno Noturno HVSB</title>
+<link rel="icon" type="image/svg+xml" href="https://static.wixstatic.com/shapes/167cba_c76d768559744f90b364541c6ff3aa51.svg">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+:root {
+  --navy-deep: #0A3D5F;
+  --navy:      #0E5C8C;
+  --blue:      #1B6FB8;
+  --blue-light:#A9D6E8;
+  --gold:      #D4A340;
+  --green:     #4A9B7E;
+  --red:       #C44545;
+  --bg:        #081F30;
+  --surface:   rgba(255,255,255,0.06);
+  --border:    rgba(255,255,255,0.12);
+  --text:      #E8F4FC;
+  --text-dim:  rgba(232,244,252,0.65);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html, body {
+  width: 100%; height: 100%;
+  font-family: 'Inter', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  overflow: hidden;
+}
+
+/* SLIDES */
+.deck {
+  width: 100vw;
+  height: 100vh;
+  position: relative;
+}
+
+.slide {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 5vh 6vw;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.35s ease;
+  overflow-y: auto;
+}
+.slide.active {
+  opacity: 1;
+  pointer-events: all;
+}
+
+/* SLIDE-SPECIFIC BG ACCENTS */
+.slide::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background: radial-gradient(ellipse 70% 60% at 80% 20%, rgba(27,111,184,0.12) 0%, transparent 70%),
+              radial-gradient(ellipse 50% 50% at 10% 90%, rgba(10,61,95,0.4) 0%, transparent 60%);
+}
+
+.slide > * { position: relative; z-index: 1; }
+
+.slide-inner {
+  width: 100%;
+  max-width: 900px;
+  margin: auto;
+}
+
+/* ── NAV ── */
+.nav {
+  position: fixed;
+  bottom: 2.4rem;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 1.2rem;
+  z-index: 100;
+  background: rgba(8,31,48,0.85);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--border);
+  border-radius: 50px;
+  padding: 0.6rem 1.2rem;
+}
+
+.nav button {
+  background: none;
+  border: none;
+  color: var(--text);
+  cursor: pointer;
+  font-size: 1.1rem;
+  padding: 0.4rem 0.6rem;
+  opacity: 0.6;
+  transition: opacity 0.2s;
+}
+.nav button:hover { opacity: 1; }
+.nav button:disabled { opacity: 0.2; cursor: default; }
+
+.nav .progress {
+  font-size: 0.8rem;
+  color: var(--text-dim);
+  font-variant-numeric: tabular-nums;
+  min-width: 4rem;
+  text-align: center;
+}
+
+.progress-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--blue), var(--blue-light));
+  transition: width 0.35s ease;
+  z-index: 100;
+}
+
+/* ── TYPOGRAPHY ── */
+.tag {
+  display: inline-block;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  padding: 0.3rem 0.85rem;
+  border-radius: 2px;
+  margin-bottom: 1.4rem;
+}
+.tag-blue { background: rgba(27,111,184,0.25); color: var(--blue-light); border: 1px solid rgba(27,111,184,0.4); }
+.tag-gold { background: rgba(212,163,64,0.2); color: var(--gold); border: 1px solid rgba(212,163,64,0.35); }
+.tag-green { background: rgba(74,155,126,0.2); color: #6ECFAC; border: 1px solid rgba(74,155,126,0.35); }
+.tag-red { background: rgba(196,69,69,0.2); color: #E8908E; border: 1px solid rgba(196,69,69,0.35); }
+
+h1 {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 800;
+  font-size: clamp(2.2rem, 5vw, 3.8rem);
+  line-height: 1.1;
+  margin-bottom: 1rem;
+}
+h2 {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 800;
+  font-size: clamp(1.6rem, 3.5vw, 2.4rem);
+  line-height: 1.15;
+  margin-bottom: 1.2rem;
+  color: var(--blue-light);
+}
+h3 {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 700;
+  font-size: 1.05rem;
+  color: var(--gold);
+  margin-bottom: 0.7rem;
+  margin-top: 1.4rem;
+  letter-spacing: 0.03em;
+}
+p {
+  color: var(--text-dim);
+  font-size: clamp(0.95rem, 1.8vw, 1.08rem);
+  line-height: 1.65;
+  margin-bottom: 0.9rem;
+}
+
+/* ── CARDS GRID ── */
+.grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin: 1.2rem 0; }
+.grid3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin: 1.2rem 0; }
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1.2rem 1.4rem;
+}
+.card .card-num {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: var(--blue);
+  line-height: 1;
+  margin-bottom: 0.4rem;
+}
+.card .card-label {
+  font-size: 0.78rem;
+  color: var(--text-dim);
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  margin-bottom: 0.5rem;
+}
+.card p { font-size: 0.92rem; margin: 0; }
+
+.card-accent-gold { border-left: 3px solid var(--gold); }
+.card-accent-green { border-left: 3px solid var(--green); }
+.card-accent-red { border-left: 3px solid var(--red); }
+.card-accent-blue { border-left: 3px solid var(--blue); }
+
+/* ── SCRIPT CARD ── */
+.script-card {
+  background: rgba(27,111,184,0.12);
+  border-left: 3px solid var(--blue);
+  border-radius: 0 6px 6px 0;
+  padding: 1rem 1.3rem;
+  margin: 0.7rem 0;
+}
+.script-card.gold { background: rgba(212,163,64,0.1); border-left-color: var(--gold); }
+.script-card.green { background: rgba(74,155,126,0.1); border-left-color: var(--green); }
+.script-card.red { background: rgba(196,69,69,0.1); border-left-color: var(--red); }
+
+.script-role {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--blue-light);
+  margin-bottom: 0.4rem;
+}
+.script-card.gold .script-role { color: var(--gold); }
+.script-card.green .script-role { color: #6ECFAC; }
+.script-card.red .script-role { color: #E8908E; }
+
+.script-text {
+  font-style: italic;
+  font-size: 0.98rem;
+  line-height: 1.55;
+  color: var(--text);
+}
+
+/* ── DO/DONT ── */
+.do-dont { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin: 1rem 0; }
+.do-box, .dont-box {
+  background: var(--surface);
+  border-radius: 6px;
+  padding: 1rem 1.2rem;
+  border: 1px solid var(--border);
+}
+.do-box { border-top: 2px solid var(--green); }
+.dont-box { border-top: 2px solid var(--red); }
+.do-box .box-title { color: #6ECFAC; font-family: 'Montserrat', sans-serif; font-size: 0.68rem; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 0.6rem; }
+.dont-box .box-title { color: #E8908E; font-family: 'Montserrat', sans-serif; font-size: 0.68rem; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 0.6rem; }
+.do-box ul, .dont-box ul { list-style: none; padding: 0; margin: 0; }
+.do-box li, .dont-box li { font-size: 0.88rem; color: var(--text-dim); padding-left: 1.2rem; position: relative; margin-bottom: 0.35rem; line-height: 1.4; }
+.do-box li::before { content: '✓'; position: absolute; left: 0; color: var(--green); font-weight: 700; }
+.dont-box li::before { content: '✗'; position: absolute; left: 0; color: var(--red); font-weight: 700; }
+
+/* ── LIST ── */
+.steps { list-style: none; padding: 0; margin: 1rem 0; counter-reset: step; }
+.steps li {
+  counter-increment: step;
+  padding: 0.8rem 1rem 0.8rem 3.2rem;
+  position: relative;
+  border-bottom: 1px solid var(--border);
+  font-size: 0.97rem;
+  color: var(--text-dim);
+  line-height: 1.5;
+}
+.steps li:last-child { border-bottom: none; }
+.steps li::before {
+  content: counter(step);
+  position: absolute;
+  left: 0.8rem;
+  top: 50%;
+  transform: translateY(-50%);
+  background: var(--blue);
+  color: white;
+  width: 22px; height: 22px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.72rem;
+  font-weight: 700;
+  font-family: 'Montserrat', sans-serif;
+}
+.steps li strong { color: var(--text); }
+
+/* ── BULLETS ── */
+.bullets { list-style: none; padding: 0; margin: 0.8rem 0; }
+.bullets li {
+  font-size: 0.96rem;
+  color: var(--text-dim);
+  padding-left: 1.4rem;
+  position: relative;
+  margin-bottom: 0.45rem;
+  line-height: 1.5;
+}
+.bullets li::before {
+  content: '›';
+  position: absolute;
+  left: 0;
+  color: var(--blue-light);
+  font-weight: 700;
+  font-size: 1rem;
+}
+.bullets li strong { color: var(--text); }
+
+/* ── HIGHLIGHT BOX ── */
+.highlight {
+  background: rgba(212,163,64,0.08);
+  border: 1px solid rgba(212,163,64,0.25);
+  border-radius: 6px;
+  padding: 1rem 1.3rem;
+  margin: 1rem 0;
+  font-size: 0.95rem;
+  color: var(--text-dim);
+  line-height: 1.6;
+}
+.highlight strong { color: var(--gold); }
+
+/* ── PRINCIPLE BOX ── */
+.principle {
+  background: rgba(27,111,184,0.08);
+  border: 1px solid rgba(169,214,232,0.2);
+  border-radius: 8px;
+  padding: 1.4rem 1.8rem;
+  margin: 1.2rem 0;
+  text-align: center;
+}
+.principle .principle-text {
+  font-family: 'Montserrat', sans-serif;
+  font-size: clamp(1.1rem, 2.5vw, 1.4rem);
+  font-weight: 700;
+  color: var(--blue-light);
+  line-height: 1.35;
+}
+
+/* ── EARA ── */
+.eara { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.8rem; margin: 1.2rem 0; }
+.eara-item {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1rem;
+  text-align: center;
+}
+.eara-letter {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 2rem;
+  font-weight: 800;
+  color: var(--blue);
+  line-height: 1;
+  margin-bottom: 0.3rem;
+}
+.eara-word {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--blue-light);
+  margin-bottom: 0.5rem;
+}
+.eara-desc { font-size: 0.83rem; color: var(--text-dim); line-height: 1.4; }
+
+/* ── META ROW ── */
+.meta-row {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  margin: 1.2rem 0;
+  flex-wrap: wrap;
+}
+.meta-item { display: flex; align-items: center; gap: 0.5rem; font-size: 0.88rem; color: var(--text-dim); }
+.meta-dot { width: 8px; height: 8px; border-radius: 50%; }
+
+/* ── KPI ROW ── */
+.kpi-row { display: flex; gap: 1.2rem; margin: 1.2rem 0; flex-wrap: wrap; }
+.kpi-box {
+  flex: 1;
+  min-width: 140px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1.1rem 1.2rem;
+  text-align: center;
+}
+.kpi-value { font-family: 'Montserrat', sans-serif; font-size: 2rem; font-weight: 800; color: var(--gold); line-height: 1; margin-bottom: 0.3rem; }
+.kpi-label { font-size: 0.78rem; color: var(--text-dim); letter-spacing: 0.04em; text-transform: uppercase; font-weight: 600; }
+
+/* ── CHECKLIST ── */
+.checklist { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 1.1rem 1.4rem; margin: 0.8rem 0; }
+.checklist-title { font-family: 'Montserrat', sans-serif; font-size: 0.68rem; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; color: var(--blue-light); margin-bottom: 0.7rem; }
+.checklist ul { list-style: none; padding: 0; margin: 0; }
+.checklist li { font-size: 0.9rem; color: var(--text-dim); padding-left: 1.8rem; position: relative; margin-bottom: 0.4rem; line-height: 1.45; }
+.checklist li::before { content: '☐'; position: absolute; left: 0; color: var(--blue-light); font-size: 1rem; line-height: 1.1; }
+
+/* ── COVER ── */
+.cover-accent {
+  display: inline-block;
+  width: 50px;
+  height: 4px;
+  background: var(--gold);
+  margin-bottom: 1.8rem;
+  border-radius: 2px;
+}
+
+/* ── OBJECAO TABLE ── */
+.obj-table { width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: 0.88rem; }
+.obj-table th { font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 0.68rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--blue-light); padding: 0.5rem 0.8rem; border-bottom: 1px solid var(--border); text-align: left; }
+.obj-table td { padding: 0.7rem 0.8rem; border-bottom: 1px solid rgba(255,255,255,0.05); color: var(--text-dim); vertical-align: top; line-height: 1.45; }
+.obj-table td:first-child { color: #E8908E; font-weight: 600; white-space: nowrap; }
+.obj-table td:last-child { color: #6ECFAC; }
+
+/* ── CLOSING ── */
+.closing-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin: 1.6rem 0; }
+.closing-item {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1.2rem;
+  text-align: center;
+}
+.closing-num { font-family: 'Montserrat', sans-serif; font-weight: 800; font-size: 2.4rem; color: var(--blue); line-height: 1; margin-bottom: 0.4rem; }
+.closing-text { font-size: 0.88rem; color: var(--text-dim); line-height: 1.4; }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 700px) {
+  .grid2, .do-dont, .eara { grid-template-columns: 1fr; }
+  .grid3 { grid-template-columns: 1fr; }
+  .closing-grid { grid-template-columns: 1fr 1fr; }
+  .slide { padding: 3vh 4vw; }
+  h1 { font-size: 1.9rem; }
+}
+</style>
+</head>
+<body>
+
+<div class="progress-bar" id="progressBar"></div>
+
+<div class="deck" id="deck">
+
+  <!-- ══════════════════════════════════════════
+       SLIDE 1 · CAPA
+  ══════════════════════════════════════════ -->
+  <div class="slide active" data-slide="1">
+    <div class="slide-inner" style="text-align:center;">
+      <div class="tag tag-blue">Treinamento · Turno Noturno</div>
+      <div class="cover-accent"></div>
+      <h1>Atendimento<br>Telefônico<br><span style="color:var(--gold)">que Converte</span></h1>
+      <p style="max-width:520px;margin:1rem auto 2rem;font-size:1.05rem;">
+        Da saudação ao fechamento — como transformar cada ligação noturna em agendamento confirmado.
+      </p>
+      <div class="meta-row" style="justify-content:center;">
+        <div class="meta-item"><div class="meta-dot" style="background:var(--blue)"></div> Hospital Veterinário São Bernardo</div>
+        <div class="meta-item"><div class="meta-dot" style="background:var(--gold)"></div> Equipe Noturna · Junho 2026</div>
+        <div class="meta-item"><div class="meta-dot" style="background:var(--green)"></div> 60–75 min</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       SLIDE 2 · POR QUE ISSO IMPORTA
+  ══════════════════════════════════════════ -->
+  <div class="slide" data-slide="2">
+    <div class="slide-inner">
+      <div class="tag tag-gold">Contexto</div>
+      <h2>Por que a ligação noturna é diferente</h2>
+      <p>Quem liga à noite está em um estado emocional diferente de quem liga de manhã. O tutor está preocupado, cansado, muitas vezes sozinho com um pet que não está bem. A forma como vocês atendem define se ele vai ou não trazer o animal.</p>
+
+      <div class="grid2" style="margin-top:1.4rem;">
+        <div class="card card-accent-gold">
+          <div class="card-label">Impacto direto</div>
+          <p>Cada ligação bem atendida é um agendamento. Cada ligação mal atendida é uma consulta que vai pra concorrência — às vezes com o pet em risco.</p>
+        </div>
+        <div class="card card-accent-blue">
+          <div class="card-label">A recepção é comercial</div>
+          <p>A recepção não é só porta de entrada — ela influencia diretamente o faturamento e a reputação do hospital. Toda conversa precisa terminar com uma próxima ação clara.</p>
+        </div>
+      </div>
+
+      <div class="principle">
+        <div class="principle-text">"Cada tutor que liga de noite está colocando confiança em quem atende.<br>Ser essa pessoa certa é o trabalho de vocês."</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       SLIDE 3 · A SAUDAÇÃO PERFEITA
+  ══════════════════════════════════════════ -->
+  <div class="slide" data-slide="3">
+    <div class="slide-inner">
+      <div class="tag tag-blue">Bloco 1</div>
+      <h2>A saudação perfeita</h2>
+      <p>Os <strong style="color:var(--text)">primeiros 5 segundos</strong> definem o tom de toda a ligação. Uma abertura firme e clara transmite profissionalismo e confiança imediatos.</p>
+
+      <div class="script-card green" style="margin:1.2rem 0;">
+        <div class="script-role">Padrão HVSB · Use sempre, sem variação</div>
+        <div class="script-text">Hospital Veterinário São Bernardo, [seu nome], [bom dia / boa tarde / boa noite].</div>
+      </div>
+
+      <div class="do-dont">
+        <div class="do-box">
+          <div class="box-title">Faça</div>
+          <ul>
+            <li>Sorria antes de atender — o tutor escuta</li>
+            <li>Atenda até o 3º toque</li>
+            <li>Diga seu nome com clareza</li>
+            <li>Fale com tom firme e leve</li>
+            <li>Frase universal após abertura: <em>"Como posso te ajudar?"</em></li>
+          </ul>
+        </div>
+        <div class="dont-box">
+          <div class="box-title">Nunca faça</div>
+          <ul>
+            <li>"Alô?" — desorienta o cliente</li>
+            <li>"São Bernardo, bom dia" sem seu nome</li>
+            <li>"Oi, quem fala?" — você perdeu o controle</li>
+            <li>Falar com barulho de fundo</li>
+            <li>Atender e pedir pra esperar logo de cara</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       SLIDE 4 · TRIAGEM
+  ══════════════════════════════════════════ -->
+  <div class="slide" data-slide="4">
+    <div class="slide-inner">
+      <div class="tag tag-blue">Bloco 2</div>
+      <h2>Triagem: entender antes de responder</h2>
+      <p>Nos primeiros <strong style="color:var(--text)">15 segundos</strong> após a abertura, identifique em qual dos 3 tipos a ligação se encaixa. Cada tipo tem tratamento diferente.</p>
+
+      <div class="grid3">
+        <div class="card card-accent-red">
+          <div class="card-label" style="color:#E8908E;">🚨 Emergência 24h</div>
+          <p>Tutor agitado, fala rápido. Palavras-chave: <em>convulsão, sangrando, atropelado, atacado, ingeriu, não respira, está mal.</em></p>
+          <p style="color:var(--red);font-size:0.83rem;font-weight:600;margin:0.5rem 0 0;">→ Acolhe primeiro, processa depois</p>
+        </div>
+        <div class="card card-accent-blue">
+          <div class="card-label" style="color:var(--blue-light);">📅 Agendamento eletivo</div>
+          <p>Tom calmo. Perguntas sobre <em>"quanto custa", "como funciona", "vacina", "castração", "banho".</em></p>
+          <p style="color:var(--blue-light);font-size:0.83rem;font-weight:600;margin:0.5rem 0 0;">→ Qualifica, constrói valor, fecha</p>
+        </div>
+        <div class="card card-accent-gold">
+          <div class="card-label" style="color:var(--gold);">🔄 Retorno / pós-atendimento</div>
+          <p>Menciona vet do hospital, fala em <em>"resultado", "exame", "retorno", "minha cadela já passou aqui".</em></p>
+          <p style="color:var(--gold);font-size:0.83rem;font-weight:600;margin:0.5rem 0 0;">→ Continuidade e agendamento</p>
+        </div>
+      </div>
+
+      <div class="highlight">
+        <strong>Frase universal de transição:</strong> após a abertura, sempre pergunte <em>"Como posso te ajudar?"</em> e escute pelos próximos 10 segundos. Não interrompa. Deixe o tutor te dar a resposta.
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       SLIDE 5 · EMERGÊNCIA
+  ══════════════════════════════════════════ -->
+  <div class="slide" data-slide="5">
+    <div class="slide-inner">
+      <div class="tag tag-red">Emergência 24h</div>
+      <h2>Atendimento de emergência</h2>
+      <p>O objetivo é <strong style="color:var(--text)">trazer o pet pra cá rapidamente</strong>. Cliente em pânico não quer formulário — quer sentir que alguém vai cuidar.</p>
+
+      <ol class="steps">
+        <li><strong>Abertura:</strong> "Hospital Veterinário São Bernardo, [nome]. O que está acontecendo?"</li>
+        <li><strong>Acolhimento</strong> (enquanto o tutor descreve): <em>"Calma, eu tô aqui, vou te ajudar agora."</em></li>
+        <li><strong>Triagem rápida</strong> — 2 ou 3 perguntas: <em>"Há quanto tempo começou? Ele está consciente? Está respirando?"</em></li>
+        <li><strong>Direcionamento:</strong> <em>"Entendi. Vem pra cá agora. Vou avisar a equipe que vocês estão chegando."</em></li>
+        <li><strong>Despedida:</strong> <em>"Vem com cuidado. Qualquer coisa no caminho, liga de novo. Estamos te esperando."</em></li>
+      </ol>
+
+      <div class="do-dont" style="margin-top:0.5rem;">
+        <div class="do-box">
+          <div class="box-title">Faça</div>
+          <ul>
+            <li>Frases curtas e firmes</li>
+            <li>"Eu tô aqui" e "vou te ajudar"</li>
+            <li>Avise a equipe interna antes de desligar</li>
+            <li>Peça apenas dados mínimos no telefone</li>
+          </ul>
+        </div>
+        <div class="dont-box">
+          <div class="box-title">Nunca faça</div>
+          <ul>
+            <li>"Vou transferir, espera"</li>
+            <li>Perguntar preço antes de acolher</li>
+            <li>"Amanhã traz no consultório"</li>
+            <li>Pedir dados longos antes do pet chegar</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       SLIDE 6 · PROCESSO COMERCIAL
+  ══════════════════════════════════════════ -->
+  <div class="slide" data-slide="6">
+    <div class="slide-inner">
+      <div class="tag tag-blue">Bloco 3</div>
+      <h2>O processo comercial</h2>
+      <p>A recepção <strong style="color:var(--text)">não é só informação — é vendas com cuidado.</strong> Construir valor antes de falar qualquer preço multiplica a taxa de conversão.</p>
+
+      <div class="highlight" style="margin-bottom:1rem;">
+        <strong>Regra de ouro:</strong> nunca jogue o preço sem contexto. Pergunte antes: <em>"Pra te passar o valor mais adequado, me conta: qual o pet, qual a idade e o que está acontecendo com ele?"</em> Quando você finalmente fala o preço, o tutor já te vê como referência, não como despesa.
+      </div>
+
+      <h3>Perguntas de qualificação (em ordem)</h3>
+      <ul class="bullets">
+        <li>Qual a <strong>idade e raça</strong> do pet?</li>
+        <li>Há quanto tempo o <strong>problema</strong> está acontecendo?</li>
+        <li>Ele já foi atendido em outro veterinário antes?</li>
+        <li>Aqui no São Bernardo, já tem cadastro? Já passou por algum doutor?</li>
+        <li>Como você nos conheceu?</li>
+        <li>Tem alguma preferência ou restrição de horário?</li>
+      </ul>
+
+      <div class="script-card gold" style="margin-top:1rem;">
+        <div class="script-role">Confirmação após agendamento — sempre</div>
+        <div class="script-text">Pronto, agendei para [dia] às [hora] com o(a) [Dr./Dra. X]. Vou te mandar um WhatsApp agora confirmando o horário e o endereço. Pode ser?</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       SLIDE 7 · TÉCNICA DO FECHAMENTO SUAVE
+  ══════════════════════════════════════════ -->
+  <div class="slide" data-slide="7">
+    <div class="slide-inner">
+      <div class="tag tag-green">Fechamento</div>
+      <h2>Técnica do fechamento suave</h2>
+      <p>A diferença entre fechar e perder está na <strong style="color:var(--text)">última frase.</strong> Toda mensagem que sai de vocês precisa empurrar para a próxima etapa.</p>
+
+      <div class="principle">
+        <div class="principle-text">Nunca deixe a decisão com o tutor.<br>Ofereça o horário — não pergunte se ele quer agendar.</div>
+      </div>
+
+      <div class="grid2" style="margin-top:1rem;">
+        <div class="card" style="border-top:2px solid var(--red);">
+          <div class="card-label" style="color:#E8908E;">❌ Errado</div>
+          <p style="font-style:italic;color:var(--text-dim);">"Tá certo então."<br>"Qualquer coisa, volte a ligar."<br>"Fica à vontade pra pensar."</p>
+          <p style="font-size:0.83rem;color:#E8908E;margin-top:0.5rem;">→ O tutor decide não. Você perdeu.</p>
+        </div>
+        <div class="card" style="border-top:2px solid var(--green);">
+          <div class="card-label" style="color:#6ECFAC;">✅ Certo</div>
+          <p style="font-style:italic;color:var(--text-dim);">"Qual horário funciona melhor — terça de manhã ou quarta à tarde?"<br>"Posso reservar esse horário agora enquanto você confirma?"</p>
+          <p style="font-size:0.83rem;color:#6ECFAC;margin-top:0.5rem;">→ Você conduziu. Tutor decide sim.</p>
+        </div>
+      </div>
+
+      <div class="script-card" style="margin-top:1rem;">
+        <div class="script-role">Sobre preço — não fuja da pergunta</div>
+        <div class="script-text">A consulta com clínico está R$ 200. Se for atendimento de emergência, fica R$ 280. Quer que eu já reserve um horário pra você?</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       SLIDE 8 · OBJEÇÕES — PRINCÍPIO
+  ══════════════════════════════════════════ -->
+  <div class="slide" data-slide="8">
+    <div class="slide-inner">
+      <div class="tag tag-gold">Bloco 4</div>
+      <h2>Objeções mais comuns</h2>
+
+      <div class="principle">
+        <div class="principle-text">"Objeção não é não.<br>É um pedido por mais informação."</div>
+      </div>
+
+      <p>Quando o tutor diz "tá caro", ele não está dizendo "não quero". Ele está dizendo "eu ainda não enxerguei valor suficiente nesse preço". Ele está pedindo pra você ajudá-lo a enxergar.</p>
+
+      <h3>Os 3 movimentos — Acolher → Reposicionar → Fechar</h3>
+      <ul class="bullets">
+        <li><strong>Acolher:</strong> valide o sentimento ANTES de qualquer argumento. "Entendi, faz sentido." Sem isso, ele fecha o ouvido.</li>
+        <li><strong>Reposicionar:</strong> mostre o que está por trás do preço — especialistas, 24h, estrutura. Não é baixar o preço, é mostrar o valor.</li>
+        <li><strong>Fechar:</strong> toda resposta empurra pra próxima etapa. "Combinado?" / "Posso reservar?" / "Qual horário funciona?"</li>
+      </ul>
+
+      <div class="highlight">
+        <strong>Alerta:</strong> o erro fatal é pular o Acolher. Não pula. São dois segundos a mais e muda completamente o resultado.
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       SLIDE 9 · OBJEÇÕES — RESPOSTAS
+  ══════════════════════════════════════════ -->
+  <div class="slide" data-slide="9">
+    <div class="slide-inner">
+      <div class="tag tag-gold">Respostas práticas</div>
+      <h2>O que responder</h2>
+
+      <table class="obj-table">
+        <thead>
+          <tr>
+            <th>Objeção</th>
+            <th>O que fazer</th>
+            <th>Resposta prática</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>"Tá caro"</td>
+            <td>Construir valor, não desconto</td>
+            <td>Entendo. A consulta inclui avaliação completa com especialista 24h. Quer que eu já reserve o horário?</td>
+          </tr>
+          <tr>
+            <td>"Vou pensar"</td>
+            <td>Criar urgência real (saúde do pet)</td>
+            <td>Faz sentido. Só te digo que com esse sintoma, quanto mais cedo a gente avaliar, melhor pro pet. Consigo segurar essa vaga por 30 min.</td>
+          </tr>
+          <tr>
+            <td>"Outra clínica é mais barato"</td>
+            <td>Diferenciar HVSB — 24h + especialistas</td>
+            <td>O diferencial nosso é atendimento 24h com especialistas e internamento. Se precisar de algo além da consulta, a gente já tem estrutura completa aqui.</td>
+          </tr>
+          <tr>
+            <td>"Não consigo ir agora"</td>
+            <td>Flexibilidade + confirmar depois</td>
+            <td>Sem problema. Vamos agendar pro horário que funciona melhor — qual dia teria mais facilidade?</td>
+          </tr>
+          <tr>
+            <td>Some / não responde</td>
+            <td>Follow-up ativo em 24h</td>
+            <td>Oi [nome], aqui é a [nome] do São Bernardo. Vi que tínhamos conversado sobre [pet]. Conseguiu uma janela pra trazer ele aqui?</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       SLIDE 10 · MÉTODO EARA
+  ══════════════════════════════════════════ -->
+  <div class="slide" data-slide="10">
+    <div class="slide-inner">
+      <div class="tag tag-blue">Método</div>
+      <h2>Método EARA</h2>
+      <p>Quatro movimentos que cabem na cabeça sem precisar decorar script. O EARA inteiro cabe em 4–5 frases.</p>
+
+      <div class="eara">
+        <div class="eara-item">
+          <div class="eara-letter">E</div>
+          <div class="eara-word">Escutar</div>
+          <div class="eara-desc">Deixa o tutor terminar de falar. Muitas vezes a objeção real está depois da objeção aparente.</div>
+        </div>
+        <div class="eara-item">
+          <div class="eara-letter">A</div>
+          <div class="eara-word">Acolher</div>
+          <div class="eara-desc">"Faz total sentido você querer ter certeza." Uma frase. Não precisa ser longa.</div>
+        </div>
+        <div class="eara-item">
+          <div class="eara-letter">R</div>
+          <div class="eara-word">Reposicionar</div>
+          <div class="eara-desc">A informação nova que muda a percepção. O que está incluso? O que o HVSB tem que outro não tem?</div>
+        </div>
+        <div class="eara-item">
+          <div class="eara-letter">A</div>
+          <div class="eara-word">Avançar</div>
+          <div class="eara-desc">"Posso reservar às 14h ou prefere amanhã de manhã?" Pergunta fechada que move pra frente.</div>
+        </div>
+      </div>
+
+      <div class="highlight" style="margin-top:0.5rem;">
+        <strong>Prática:</strong> vamos montar uma resposta EARA ao vivo. Escolhe uma objeção que aparece no dia a dia de vocês e vamos construir juntos.
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       SLIDE 11 · PEDIDO DE AVALIAÇÃO
+  ══════════════════════════════════════════ -->
+  <div class="slide" data-slide="11">
+    <div class="slide-inner">
+      <div class="tag tag-green">Bloco 5</div>
+      <h2>Pedido de avaliação Google</h2>
+      <p>O pedido é <strong style="color:var(--text)">no checkout, com filtro</strong>. Não mande link em massa pelo WhatsApp dias depois — não funciona e corre risco de virar review negativa.</p>
+
+      <ol class="steps">
+        <li><strong>Filtro (sempre primeiro):</strong> <em>"E aí, como foi o atendimento do [nome do pet] hoje? Conseguimos resolver tudo?"</em></li>
+        <li><strong>Se positivo:</strong> <em>"Que ótimo! A gente tá numa campanha de avaliações no Google. Você consegue avaliar com 5 estrelinhas? É super rápido, vou te mandar o link agora."</em></li>
+        <li><strong>Se negativo ou hesitante:</strong> <em>"Me conta o que aconteceu — é muito importante pra gente melhorar. Vou anotar e levar pra Letícia."</em> <span style="color:#E8908E;font-size:0.85rem;">(Não pede review. Encaminha pra correção.)</span></li>
+      </ol>
+
+      <div class="kpi-row" style="margin-top:1.2rem;">
+        <div class="kpi-box">
+          <div class="kpi-value">30</div>
+          <div class="kpi-label">reviews 5★ / recepcionista / mês</div>
+        </div>
+        <div class="kpi-box">
+          <div class="kpi-value">4</div>
+          <div class="kpi-label">recepcionistas</div>
+        </div>
+        <div class="kpi-box">
+          <div class="kpi-value">120</div>
+          <div class="kpi-label">reviews / mês · meta do hospital</div>
+        </div>
+        <div class="kpi-box">
+          <div class="kpi-value">4,7★</div>
+          <div class="kpi-label">nota alvo no Google</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       SLIDE 12 · CHECKLIST E METAS
+  ══════════════════════════════════════════ -->
+  <div class="slide" data-slide="12">
+    <div class="slide-inner">
+      <div class="tag tag-blue">Bloco 6</div>
+      <h2>Checklist do turno noturno</h2>
+
+      <div class="grid2">
+        <div>
+          <div class="checklist">
+            <div class="checklist-title">Início do turno</div>
+            <ul>
+              <li>Confirmar agenda (consultas, cirurgias, retornos)</li>
+              <li>Verificar exames que ficam prontos hoje</li>
+              <li>Listar pós-cirurgia (D+1 e D+7) pra ligar</li>
+              <li>Conferir pendências do turno anterior</li>
+            </ul>
+          </div>
+          <div class="checklist" style="margin-top:0.8rem;">
+            <div class="checklist-title">Durante o turno</div>
+            <ul>
+              <li>Atender em até 3 toques com abertura padrão</li>
+              <li>Ligar para tutores com exame pronto (no mesmo dia)</li>
+              <li>Pedir review no checkout pra tutor satisfeito</li>
+              <li>Registrar qualquer reclamação → Letícia</li>
+            </ul>
+          </div>
+        </div>
+        <div>
+          <div class="checklist">
+            <div class="checklist-title">Fim do turno</div>
+            <ul>
+              <li>Conferir se todos os exames do dia foram comunicados</li>
+              <li>Anotar quantas reviews foram solicitadas</li>
+              <li>Registrar ligações sem fechamento → follow-up</li>
+              <li>Passar pendências pro turno seguinte</li>
+            </ul>
+          </div>
+
+          <div class="card card-accent-gold" style="margin-top:0.8rem;">
+            <div class="card-label">Metas do turno noturno</div>
+            <ul class="bullets" style="margin:0.4rem 0 0;">
+              <li><strong>60%</strong> de taxa de conversão (ligações → agendamentos)</li>
+              <li><strong>0 exames</strong> sem retorno proativo ao tutor</li>
+              <li><strong>30 reviews</strong> 5★ por recepcionista/mês</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       SLIDE 13 · SIMULAÇÃO AO VIVO
+  ══════════════════════════════════════════ -->
+  <div class="slide" data-slide="13">
+    <div class="slide-inner">
+      <div class="tag tag-gold">Prática</div>
+      <h2>Simulação ao vivo</h2>
+      <p>Agora a gente pratica. Duas rodadas — cada uma com um tipo de ligação diferente. Uma pessoa faz o papel do tutor, outra atende.</p>
+
+      <div class="grid2">
+        <div class="card card-accent-red">
+          <div class="card-label" style="color:#E8908E;">Cenário 1 · Emergência</div>
+          <p><em>"Meu cachorro tomou um choque elétrico, ele tá tremendo muito, o que eu faço?"</em></p>
+          <p style="font-size:0.83rem;color:var(--text-dim);margin-top:0.5rem;">Treinar: acolhimento, triagem rápida, direcionamento, despedida de segurança.</p>
+        </div>
+        <div class="card card-accent-blue">
+          <div class="card-label" style="color:var(--blue-light);">Cenário 2 · Agendamento com objeção</div>
+          <p><em>"Quanto custa a consulta? Porque em outra clínica aqui perto é mais barato."</em></p>
+          <p style="font-size:0.83rem;color:var(--text-dim);margin-top:0.5rem;">Treinar: qualificação, construção de valor, EARA, fechamento suave.</p>
+        </div>
+      </div>
+
+      <div class="highlight" style="margin-top:1.2rem;">
+        <strong>Observadores:</strong> anotem um ponto positivo e um ponto de melhoria. Depois a gente troca feedback em grupo — sem julgamento, com construtividade.
+      </div>
+
+      <div class="principle" style="margin-top:1rem;">
+        <div class="principle-text">A ligação que vocês simulam hoje<br>é a que vira agendamento amanhã.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       SLIDE 14 · ENCERRAMENTO
+  ══════════════════════════════════════════ -->
+  <div class="slide" data-slide="14">
+    <div class="slide-inner" style="text-align:center;">
+      <div class="tag tag-green">Encerramento</div>
+      <h2>3 coisas pra sair daqui sabendo</h2>
+
+      <div class="closing-grid">
+        <div class="closing-item">
+          <div class="closing-num">1</div>
+          <div class="closing-text">A abertura padrão não muda.<br><em>"HVSB, [nome], [período]."</em></div>
+        </div>
+        <div class="closing-item">
+          <div class="closing-num">2</div>
+          <div class="closing-text">Valor antes do preço.<br>Sempre pergunte antes de citar valor.</div>
+        </div>
+        <div class="closing-item">
+          <div class="closing-num">3</div>
+          <div class="closing-text">Objeção = pedido por mais informação.<br>Acolhe → Reposiciona → Fecha.</div>
+        </div>
+      </div>
+
+      <div class="principle" style="margin:1.8rem 0 1.2rem;">
+        <div class="principle-text">O turno noturno do HVSB é onde<br>as decisões mais importantes são tomadas.<br><span style="color:var(--gold)">Vocês fazem essa diferença acontecer.</span></div>
+      </div>
+
+      <p style="font-size:0.88rem;">Dúvidas? Fale com a <strong style="color:var(--text)">Letícia</strong>.<br>Material disponível no link abaixo pra consultar sempre que precisar.</p>
+    </div>
+  </div>
+
+</div><!-- .deck -->
+
+<!-- NAV -->
+<div class="nav">
+  <button id="btnPrev" onclick="changeSlide(-1)" title="Anterior">←</button>
+  <div class="progress" id="progressText">1 / 14</div>
+  <button id="btnNext" onclick="changeSlide(1)" title="Próximo">→</button>
+</div>
+
+<script>
+let current = 1;
+const total = document.querySelectorAll('.slide').length;
+
+function changeSlide(dir) {
+  const next = current + dir;
+  if (next < 1 || next > total) return;
+  document.querySelector('.slide.active').classList.remove('active');
+  current = next;
+  document.querySelectorAll('.slide')[current - 1].classList.add('active');
+  document.getElementById('progressText').textContent = current + ' / ' + total;
+  document.getElementById('progressBar').style.width = ((current / total) * 100) + '%';
+  document.getElementById('btnPrev').disabled = current === 1;
+  document.getElementById('btnNext').disabled = current === total;
+}
+
+document.addEventListener('keydown', e => {
+  if (['ArrowRight','Space','PageDown'].includes(e.key)) { e.preventDefault(); changeSlide(1); }
+  if (['ArrowLeft','PageUp'].includes(e.key)) { e.preventDefault(); changeSlide(-1); }
+  if (e.key === 'Home') { e.preventDefault(); while(current>1) changeSlide(-1); }
+  if (e.key === 'End')  { e.preventDefault(); while(current<total) changeSlide(1); }
+});
+
+// touch
+let tx = 0;
+document.addEventListener('touchstart', e => { tx = e.touches[0].clientX; }, {passive:true});
+document.addEventListener('touchend', e => {
+  const dx = tx - e.changedTouches[0].clientX;
+  if (Math.abs(dx) > 40) changeSlide(dx > 0 ? 1 : -1);
+}, {passive:true});
+
+// init
+document.getElementById('btnPrev').disabled = true;
+document.getElementById('progressBar').style.width = ((1/total)*100)+'%';
+</script>
+
+</body>
+</html>
